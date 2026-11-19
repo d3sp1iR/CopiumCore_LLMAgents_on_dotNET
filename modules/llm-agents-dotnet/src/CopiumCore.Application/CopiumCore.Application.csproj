@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="../CopiumCore.Domain/CopiumCore.Domain.csproj" />
+  </ItemGroup>
+</Project>

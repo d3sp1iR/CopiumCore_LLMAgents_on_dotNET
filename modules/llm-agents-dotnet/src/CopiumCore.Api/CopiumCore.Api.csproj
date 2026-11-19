@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <ItemGroup>
+    <ProjectReference Include="../CopiumCore.Application/CopiumCore.Application.csproj" />
+    <ProjectReference Include="../CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

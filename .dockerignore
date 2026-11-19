@@ -1,0 +1,17 @@
+**/bin/
+**/obj/
+.git/
+**/.vs/
+**/.idea/
+**/TestResults/
+**/.env
+**/.env.*
+!**/.env.example
+**/appsettings.Local.json
+**/appsettings.*.Local.json
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.sqlite
+**/*.sqlite-shm
+**/*.sqlite-wal

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Api/CopiumCore.Api.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Application/CopiumCore.Application.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Console/CopiumCore.Console.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Domain/CopiumCore.Domain.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
+  </Folder>
+</Solution>
