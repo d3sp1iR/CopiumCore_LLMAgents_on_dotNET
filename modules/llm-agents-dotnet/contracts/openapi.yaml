@@ -1,0 +1,375 @@
+openapi: 3.0.3
+info:
+  title: CopiumCore LLM Agents API — проект контракта
+  version: 0.1.0-draft
+  description: |
+    Начальный проект контракта по разделам 5, 6 и 11 CopiumCore_TZ.md.
+    Документ не подтверждает наличие или готовность реализации. Описано только
+    минимальное подмножество API; остальные операции ТЗ здесь отсутствуют.
+    Форматы политик агента, численные ограничения полей и способ аутентификации
+    требуют согласования. Идентификаторы в примерах условные.
+servers:
+  - url: /
+    description: Пути включают базовый префикс модуля; gateway может назначить внешний префикс.
+paths:
+  /api/llm/v1/agents:
+    post:
+      operationId: createAgent
+      summary: Создать конфигурацию агента
+      description: Требуется право admin. Серверные поля id и version не передаются.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCreate'
+            example:
+              name: Проверка заявки
+              purpose: Найти основание для шифра группы
+              modelProfile: local
+              systemInstruction: Используй проверенные источники.
+              toolAllowlist: [queryMetagraph, getObject, proposeChange]
+              memoryPolicy: {}
+              accessPolicy: {}
+              enabled: true
+      responses:
+        '201':
+          description: Агент создан.
+          headers:
+            Location:
+              description: URI созданного агента.
+              required: true
+              schema: { type: string, format: uri-reference }
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AgentDefinition' }
+              example:
+                id: a-review
+                version: '1'
+                name: Проверка заявки
+                purpose: Найти основание для шифра группы
+                modelProfile: local
+                systemInstruction: Используй проверенные источники.
+                toolAllowlist: [queryMetagraph, getObject, proposeChange]
+                memoryPolicy: {}
+                accessPolicy: {}
+                enabled: true
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '503': { $ref: '#/components/responses/Unavailable' }
+  /api/llm/v1/sessions:
+    post:
+      operationId: createSession
+      summary: Создать сессию
+      description: Требуется право operator в своей области; владелец определяется проверенным удостоверением.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SessionCreate' }
+            example: { agentId: a-review }
+      responses:
+        '201':
+          description: Сессия создана.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SessionCreated' }
+              example: { sessionId: s-8, agentId: a-review }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '503': { $ref: '#/components/responses/Unavailable' }
+  /api/llm/v1/runs:
+    post:
+      operationId: createRun
+      summary: Принять запуск
+      description: |
+        Требуется право operator или service. Повтор с теми же субъектом,
+        маршрутом, ключом и каноническим JSON возвращает исходный ответ после
+        проверки текущих прав. Ключ хранится не менее 24 часов. Другое тело с
+        тем же ключом вызывает IDEMPOTENCY_CONFLICT; отличающийся запрос при
+        активном запуске в сессии вызывает SESSION_BUSY.
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: true
+          description: Ключ идемпотентного повтора.
+          schema: { type: string, minLength: 1 }
+          example: run-case-17-attempt-1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RunCreate' }
+            example:
+              agentId: a-review
+              sessionId: s-8
+              taskId: case-17
+              input: Проверь заявку req-17 и предложи шифр группы по решению комиссии
+      responses:
+        '202':
+          description: Запуск принят для фонового исполнения.
+          headers:
+            Location:
+              required: true
+              description: URI ресурса запуска для опроса.
+              schema: { type: string, format: uri-reference }
+              example: /api/llm/v1/runs/r-42
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunAccepted' }
+              example: { runId: r-42, status: queued, sessionId: s-8, taskId: case-17 }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Конфликт ключа идемпотентности или занятой сессии.
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+              examples:
+                idempotencyConflict:
+                  value: { type: about:blank, title: Конфликт идемпотентности, status: 409, code: IDEMPOTENCY_CONFLICT, traceId: trace-1 }
+                sessionBusy:
+                  value: { type: about:blank, title: Сессия занята, status: 409, code: SESSION_BUSY, traceId: trace-2 }
+        '422': { $ref: '#/components/responses/Unprocessable' }
+        '429':
+          description: Очередь заполнена; запуск не создан.
+          headers:
+            Retry-After:
+              required: true
+              description: Время ожидания согласно HTTP Retry-After.
+              schema: { type: string }
+              example: '5'
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+              example: { type: about:blank, title: Очередь заполнена, status: 429, code: QUEUE_FULL, traceId: trace-3 }
+        '503': { $ref: '#/components/responses/Unavailable' }
+  /api/llm/v1/runs/{id}:
+    get:
+      operationId: getRun
+      summary: Получить состояние запуска
+      description: Доступен владельцу или разрешённому service. Ошибки после приёма отражаются в ресурсе запуска.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { $ref: '#/components/schemas/Id' }
+          example: r-42
+      responses:
+        '200':
+          description: Текущее состояние запуска.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+              examples:
+                succeeded:
+                  value:
+                    runId: r-42
+                    status: succeeded
+                    result:
+                      outcome: proposalCreated
+                      summary: Решение комиссии указывает ИУ5-31Б.
+                      evidence: [{ objectId: doc-9, version: '3', field: groupCode }]
+                      proposalIds: [p-43]
+                failed:
+                  value: { runId: r-42, status: failed, errorCode: INVALID_MODEL_OUTPUT }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '503': { $ref: '#/components/responses/Unavailable' }
+  /health:
+    get:
+      operationId: health
+      summary: Проверить, что процесс жив
+      description: Маршрут мониторинга вне базового пути API.
+      responses:
+        '200':
+          description: Процесс жив; формат тела не определён ТЗ.
+  /ready:
+    get:
+      operationId: ready
+      summary: Проверить готовность обязательных зависимостей
+      description: Маршрут мониторинга; формат ответа является предложением проекта.
+      responses:
+        '200':
+          description: Обязательные зависимости доступны.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Readiness' }
+              example: { unavailableDependencies: [] }
+        '503':
+          description: Одна или несколько обязательных зависимостей недоступны.
+          content:
+            application/problem+json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/Problem'
+                  - type: object
+                    required: [unavailableDependencies]
+                    properties:
+                      unavailableDependencies:
+                        type: array
+                        minItems: 1
+                        items: { type: string, minLength: 1 }
+              example:
+                type: about:blank
+                title: Сервис не готов
+                status: 503
+                code: DEPENDENCY_UNAVAILABLE
+                traceId: trace-4
+                unavailableDependencies: [metagraph]
+components:
+  schemas:
+    Id:
+      type: string
+      minLength: 1
+      description: Непрозрачный публичный идентификатор; верхний предел требует согласования.
+    AgentCreate:
+      type: object
+      required: [name, purpose, modelProfile, systemInstruction, toolAllowlist, memoryPolicy, accessPolicy, enabled]
+      properties:
+        name: { type: string, minLength: 1 }
+        purpose: { type: string, minLength: 1 }
+        modelProfile: { type: string, minLength: 1, description: Ссылка на профиль из каталога. }
+        systemInstruction: { type: string, minLength: 1 }
+        toolAllowlist:
+          type: array
+          description: Имена проверяются по каталогу инструментов.
+          items: { type: string, minLength: 1 }
+        memoryPolicy: { type: object, description: Структура требует согласования. }
+        accessPolicy: { type: object, description: Структура требует согласования; не содержит действующих полномочий. }
+        enabled: { type: boolean }
+    AgentDefinition:
+      allOf:
+        - $ref: '#/components/schemas/AgentCreate'
+        - type: object
+          required: [id, version]
+          properties:
+            id: { $ref: '#/components/schemas/Id' }
+            version: { type: string, minLength: 1 }
+    SessionCreate:
+      type: object
+      additionalProperties: false
+      required: [agentId]
+      properties:
+        agentId: { $ref: '#/components/schemas/Id' }
+    SessionCreated:
+      type: object
+      required: [sessionId, agentId]
+      properties:
+        sessionId: { $ref: '#/components/schemas/Id' }
+        agentId: { $ref: '#/components/schemas/Id' }
+    RunCreate:
+      type: object
+      additionalProperties: false
+      required: [agentId, sessionId, taskId, input]
+      properties:
+        agentId: { $ref: '#/components/schemas/Id' }
+        sessionId: { $ref: '#/components/schemas/Id' }
+        taskId: { $ref: '#/components/schemas/Id' }
+        input: { type: string, minLength: 1, description: Верхний предел требует согласования. }
+    RunStatus:
+      type: string
+      enum: [queued, running, succeeded, failed, cancelled, timedOut]
+    RunAccepted:
+      type: object
+      required: [runId, status, sessionId, taskId]
+      properties:
+        runId: { $ref: '#/components/schemas/Id' }
+        status: { $ref: '#/components/schemas/RunStatus' }
+        sessionId: { $ref: '#/components/schemas/Id' }
+        taskId: { $ref: '#/components/schemas/Id' }
+    Run:
+      type: object
+      description: При succeeded присутствует result; при failed — errorCode. Условия требуют проверки сервером.
+      required: [runId, status]
+      properties:
+        runId: { $ref: '#/components/schemas/Id' }
+        status: { $ref: '#/components/schemas/RunStatus' }
+        result: { $ref: '#/components/schemas/RunResult' }
+        errorCode: { type: string, minLength: 1 }
+    RunResult:
+      type: object
+      description: При proposalCreated нужен хотя бы один proposal и источник; при insufficientEvidence proposalIds пуст.
+      required: [outcome, summary, evidence, proposalIds]
+      properties:
+        outcome: { type: string, enum: [answered, proposalCreated, insufficientEvidence] }
+        summary: { type: string }
+        evidence:
+          type: array
+          items: { $ref: '#/components/schemas/SourceRef' }
+        proposalIds:
+          type: array
+          items: { $ref: '#/components/schemas/Id' }
+    SourceRef:
+      type: object
+      required: [objectId, version]
+      properties:
+        objectId: { $ref: '#/components/schemas/Id' }
+        version: { type: string, minLength: 1 }
+        field: { type: string, description: Необязательный путь поля. }
+    Readiness:
+      type: object
+      required: [unavailableDependencies]
+      properties:
+        unavailableDependencies:
+          type: array
+          maxItems: 0
+          items: { type: string, minLength: 1 }
+    Problem:
+      type: object
+      required: [type, title, status, code, traceId]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer, minimum: 400, maximum: 599 }
+        code: { type: string, minLength: 1 }
+        traceId: { type: string, minLength: 1 }
+        errors:
+          type: array
+          description: Детали ошибок; структура элемента требует согласования.
+          items: { type: object }
+  responses:
+    BadRequest:
+      description: Некорректный JSON или запрос.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Некорректный JSON, status: 400, code: INVALID_JSON, traceId: trace-5 }
+    Unauthorized:
+      description: Отсутствует аутентификация.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Требуется аутентификация, status: 401, code: UNAUTHENTICATED, traceId: trace-6 }
+    Forbidden:
+      description: Операция запрещена.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Доступ запрещён, status: 403, code: FORBIDDEN, traceId: trace-7 }
+    NotFound:
+      description: Запись отсутствует или скрыта.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Запись не найдена, status: 404, code: NOT_FOUND, traceId: trace-8 }
+    Unprocessable:
+      description: Семантически неверный ввод.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Неверный ввод, status: 422, code: VALIDATION_ERROR, traceId: trace-9 }
+    Unavailable:
+      description: Обязательная зависимость недоступна до приёма операции.
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example: { type: about:blank, title: Зависимость недоступна, status: 503, code: DEPENDENCY_UNAVAILABLE, traceId: trace-10 }
