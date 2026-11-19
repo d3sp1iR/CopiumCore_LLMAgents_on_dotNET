@@ -6,4 +6,7 @@
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Domain/CopiumCore.Domain.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Domain.Tests/CopiumCore.Domain.Tests.csproj" />
+  </Folder>
 </Solution>
