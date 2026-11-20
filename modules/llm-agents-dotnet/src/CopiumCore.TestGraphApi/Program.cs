@@ -23,7 +23,7 @@ public static class TestGraphApp
                 id = "req-17",
                 type = "Application",
                 version = "7",
-                attributes = new { groupCode = (string?)null, projectId = "project-4" }
+                attributes = new { groupCode = (string?)null, projectId = "project-4", decisionId = "doc-9" }
             }),
             "doc-9" => Results.Ok(new
             {

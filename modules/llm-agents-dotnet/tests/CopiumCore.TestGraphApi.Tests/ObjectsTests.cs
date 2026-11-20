@@ -34,6 +34,7 @@ public sealed class ObjectsTests
         {
             Assert.Equal(JsonValueKind.Null, attributes.GetProperty("groupCode").ValueKind);
             Assert.Equal("project-4", attributes.GetProperty("projectId").GetString());
+            Assert.Equal("doc-9", attributes.GetProperty("decisionId").GetString());
         }
         else
         {

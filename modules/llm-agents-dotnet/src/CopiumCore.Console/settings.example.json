@@ -1,0 +1,17 @@
+{
+  "baseUrl": "http://localhost:5000/",
+  "input": "Проверь заявку req-17 и предложи шифр группы по решению комиссии",
+  "taskId": "case-17",
+  "pollIntervalSeconds": 1,
+  "timeoutSeconds": 300,
+  "agent": {
+    "name": "Проверка заявки",
+    "purpose": "Найти основание для шифра группы",
+    "modelProfile": "local",
+    "systemInstruction": "Используй проверенные источники.",
+    "toolAllowlist": ["queryMetagraph", "getObject", "proposeChange"],
+    "memoryPolicy": {},
+    "accessPolicy": {},
+    "enabled": true
+  }
+}

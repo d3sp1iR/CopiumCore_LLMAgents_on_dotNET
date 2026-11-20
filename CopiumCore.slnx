@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Api/CopiumCore.Api.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.AgentRuntime/CopiumCore.AgentRuntime.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Application/CopiumCore.Application.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Console/CopiumCore.Console.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Domain/CopiumCore.Domain.csproj" />
@@ -9,6 +10,7 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Domain.Tests/CopiumCore.Domain.Tests.csproj" />
+    <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Api.Tests/CopiumCore.Api.Tests.csproj" />
     <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Infrastructure.Tests/CopiumCore.Infrastructure.Tests.csproj" />
     <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.TestGraphApi.Tests/CopiumCore.TestGraphApi.Tests.csproj" />
   </Folder>

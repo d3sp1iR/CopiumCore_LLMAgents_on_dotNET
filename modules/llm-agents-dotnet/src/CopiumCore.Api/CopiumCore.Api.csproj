@@ -2,5 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="../CopiumCore.Application/CopiumCore.Application.csproj" />
     <ProjectReference Include="../CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
+    <ProjectReference Include="../CopiumCore.AgentRuntime/CopiumCore.AgentRuntime.csproj" />
   </ItemGroup>
 </Project>
