@@ -5,8 +5,11 @@
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Console/CopiumCore.Console.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Domain/CopiumCore.Domain.csproj" />
     <Project Path="modules/llm-agents-dotnet/src/CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
+    <Project Path="modules/llm-agents-dotnet/src/CopiumCore.TestGraphApi/CopiumCore.TestGraphApi.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Domain.Tests/CopiumCore.Domain.Tests.csproj" />
+    <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.Infrastructure.Tests/CopiumCore.Infrastructure.Tests.csproj" />
+    <Project Path="modules/llm-agents-dotnet/tests/CopiumCore.TestGraphApi.Tests/CopiumCore.TestGraphApi.Tests.csproj" />
   </Folder>
 </Solution>
