@@ -48,8 +48,8 @@ public sealed class AgentExecutor(IChatClient chatClient, IGraphReader graphRead
 
         var tool = AIFunctionFactory.Create(GetObject, "getObject", "Read a metagraph object by ID.");
         var agent = chatClient.AsAIAgent(
-            instructions: "Use getObject to read the objects needed for the user's request. Never invent sources. " +
-                "Return only JSON with outcome (answered, insufficientEvidence or proposalCreated), summary (string), " +
+            instructions: "Use getObject to read the objects needed for the user's request. Copy object IDs exactly as written in the user request or returned by tools; never add prefixes, alter IDs or invent IDs. First read the exact application ID provided by the user, then read the decisionId returned by that object. Never invent sources. " +
+                "Return only raw JSON without Markdown code fences or extra text, with outcome (answered, insufficientEvidence or proposalCreated), summary (string), " +
                 "evidence (array of {objectId, version, field?}), proposalIds (always empty array). " +
                 "For answered cite at least one object actually read. For a requested groupCode change, " +
                 "read both the target application and its decision with getObject. The application's decisionId identifies the decision. If the decision is approved " +
@@ -108,7 +108,7 @@ public sealed class AgentExecutor(IChatClient chatClient, IGraphReader graphRead
             "groupCode", before.Clone(), candidate.NewValue, sources);
     }
 
-    private static bool TryValidate(string? text, ConcurrentBag<GraphObject> reads, out ExecutionResult? result)
+    internal static bool TryValidate(string? text, ConcurrentBag<GraphObject> reads, out ExecutionResult? result)
     {
         result = null;
         try

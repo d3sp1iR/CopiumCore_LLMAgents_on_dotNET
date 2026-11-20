@@ -13,7 +13,7 @@ public sealed class RunEntry(string id, RunCreate request, AgentDefinition agent
     public string? ErrorCode { get; set; }
 }
 
-public sealed class DemoStore
+public sealed class DemoStore(ILogger<DemoStore> logger)
 {
     private readonly object gate = new();
     private readonly Dictionary<string, AgentDefinition> agents = [];
@@ -104,9 +104,10 @@ public sealed class DemoStore
         {
             lock (gate) { run.Status = "cancelled"; }
         }
-        catch
+        catch (Exception ex)
         {
-            lock (gate) { run.Status = "failed"; run.ErrorCode = "EXECUTION_FAILED"; }
+            logger.LogError("Run {RunId} failed: {ErrorType}", run.Id, ex.GetType().Name);
+            lock (gate) { run.Status = "failed"; run.ErrorCode = ex is InvalidDataException ? "INVALID_MODEL_OUTPUT" : "EXECUTION_FAILED"; }
         }
     }
 }
