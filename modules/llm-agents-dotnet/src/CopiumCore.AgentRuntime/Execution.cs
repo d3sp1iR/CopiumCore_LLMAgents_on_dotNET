@@ -52,7 +52,7 @@ public sealed class AgentExecutor(IChatClient chatClient, IGraphReader graphRead
                 "Return only JSON with outcome (answered, insufficientEvidence or proposalCreated), summary (string), " +
                 "evidence (array of {objectId, version, field?}), proposalIds (always empty array). " +
                 "For answered cite at least one object actually read. For a requested groupCode change, " +
-                "read both the target application and the decision with getObject. If the decision is approved " +
+                "read both the target application and its decision with getObject. The application's decisionId identifies the decision. If the decision is approved " +
                 "and its applicationId matches the target, return outcome proposalCreated and proposalCandidate: " +
                 "{operation: 'setAttribute', objectId: target ID, expectedVersion: target version, " +
                 "field: 'groupCode', newValue: decision groupCode, decisionId: decision ID, decisionVersion: decision version}. " +
@@ -90,6 +90,8 @@ public sealed class AgentExecutor(IChatClient chatClient, IGraphReader graphRead
         if (target is null || decision is null || target.Type != "Application" || decision.Type != "Decision" ||
             !target.Attributes.TryGetProperty("groupCode", out var before) ||
             (before.ValueKind != JsonValueKind.Null && before.ValueKind != JsonValueKind.String) ||
+            !target.Attributes.TryGetProperty("decisionId", out var decisionId) ||
+            decisionId.ValueKind != JsonValueKind.String || decisionId.GetString() != decision.Id ||
             !decision.Attributes.TryGetProperty("approved", out var approved) || approved.ValueKind != JsonValueKind.True ||
             !decision.Attributes.TryGetProperty("applicationId", out var applicationId) ||
             applicationId.ValueKind != JsonValueKind.String || applicationId.GetString() != target.Id ||
@@ -99,7 +101,7 @@ public sealed class AgentExecutor(IChatClient chatClient, IGraphReader graphRead
             !evidence.Any(e => e.ObjectId == decision.Id && e.Version == decision.Version))
             return null;
 
-        SourceRef[] sources = [new(target.Id, target.Version, "groupCode"),
+        SourceRef[] sources = [new(target.Id, target.Version, "groupCode"), new(target.Id, target.Version, "decisionId"),
             new(decision.Id, decision.Version, "groupCode"), new(decision.Id, decision.Version, "approved"),
             new(decision.Id, decision.Version, "applicationId")];
         return new PreparedProposal(Guid.NewGuid().ToString("N"), "setAttribute", target.Id, target.Version,
