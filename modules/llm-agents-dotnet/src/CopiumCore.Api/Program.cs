@@ -177,16 +177,34 @@ public static class ApiApp
                 if (reasons.Count != 0) return Problem(context, 409, "PROVENANCE_CONFLICT");
             }
             var writer = services.GetService<IChangeWriter>();
-            ChangeReceipt? receipt = null;
-            if (writer is not null)
+            if (writer is null)
             {
-                var expectedTargetVersion = proposal.Evidence.FirstOrDefault(e => e.ObjectId == proposal.TargetObjectId)?.Version;
-                if (expectedTargetVersion is null) return Problem(context, 409, "PROVENANCE_CONFLICT");
-                var operationId = $"op-{id}-{version}";
-                receipt = await writer.SetAttributeAsync(new ChangeRequest(proposal.TargetObjectId, proposal.Field, proposal.After, expectedTargetVersion, operationId), context.RequestAborted);
-                if (receipt is null) return Problem(context, 409, "GRAPH_CONFLICT");
+                var resultWithoutGraph = await reviewStore.DecideAsync(id, "approve", null, version, key, cancellationToken: context.RequestAborted);
+                return resultWithoutGraph is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Accepted($"/api/llm/v1/proposals/{id}", new { decision = resultWithoutGraph, change = (ChangeReceipt?)null });
             }
-            var result = await reviewStore.DecideAsync(id, "approve", null, version, key, receipt?.OperationId, context.RequestAborted);
+            var expectedTargetVersion = proposal.Evidence.FirstOrDefault(e => e.ObjectId == proposal.TargetObjectId)?.Version;
+            if (expectedTargetVersion is null) return Problem(context, 409, "PROVENANCE_CONFLICT");
+            var operationId = $"op-{id}-{version}";
+            var applying = await reviewStore.BeginApplyAsync(id, version, key, operationId, context.RequestAborted);
+            if (applying is null) return Problem(context, 409, "PROPOSAL_CONFLICT");
+            if (applying.Status == "approved")
+                return Results.Accepted($"/api/llm/v1/proposals/{id}", new { decision = applying, change = (ChangeReceipt?)null });
+            ChangeReceipt? receipt;
+            try
+            {
+                receipt = await writer.SetAttributeAsync(new ChangeRequest(proposal.TargetObjectId, proposal.Field, proposal.After, expectedTargetVersion, operationId), context.RequestAborted);
+                if (receipt is null)
+                {
+                    await reviewStore.ReleaseApplyAsync(id, applying.Version, CancellationToken.None);
+                    return Problem(context, 409, "GRAPH_CONFLICT");
+                }
+            }
+            catch
+            {
+                await reviewStore.ReleaseApplyAsync(id, applying.Version, CancellationToken.None);
+                throw;
+            }
+            var result = await reviewStore.CompleteApplyAsync(id, applying.Version, key, receipt.OperationId, context.RequestAborted);
             return result is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Accepted($"/api/llm/v1/proposals/{id}", new { decision = result, change = receipt });
         });
         api.MapPost("/proposals/{id}/reject", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>

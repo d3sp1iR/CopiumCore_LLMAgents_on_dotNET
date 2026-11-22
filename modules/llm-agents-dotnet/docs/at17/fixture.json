@@ -1,0 +1,3215 @@
+{
+  "seed": 17017,
+  "count": 100,
+  "changedSource": {
+    "objectId": "doc-042",
+    "oldVersion": "3",
+    "newVersion": "4",
+    "field": "groupCode"
+  },
+  "expectedStaleProposalIds": [
+    "proposal-042"
+  ],
+  "proposals": [
+    {
+      "proposalId": "proposal-001",
+      "applicationId": "req-001",
+      "decisionId": "doc-001",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-15Б",
+      "sources": [
+        {
+          "objectId": "req-001",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-001",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-001",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-001",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-002",
+      "applicationId": "req-002",
+      "decisionId": "doc-002",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-35Б",
+      "sources": [
+        {
+          "objectId": "req-002",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-002",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-002",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-002",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-003",
+      "applicationId": "req-003",
+      "decisionId": "doc-003",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-30Б",
+      "sources": [
+        {
+          "objectId": "req-003",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-003",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-003",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-003",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-004",
+      "applicationId": "req-004",
+      "decisionId": "doc-004",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-60Б",
+      "sources": [
+        {
+          "objectId": "req-004",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-004",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-004",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-004",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-005",
+      "applicationId": "req-005",
+      "decisionId": "doc-005",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-22Б",
+      "sources": [
+        {
+          "objectId": "req-005",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-005",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-005",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-005",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-006",
+      "applicationId": "req-006",
+      "decisionId": "doc-006",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-26Б",
+      "sources": [
+        {
+          "objectId": "req-006",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-006",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-006",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-006",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-007",
+      "applicationId": "req-007",
+      "decisionId": "doc-007",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-35Б",
+      "sources": [
+        {
+          "objectId": "req-007",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-007",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-007",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-007",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-008",
+      "applicationId": "req-008",
+      "decisionId": "doc-008",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-20Б",
+      "sources": [
+        {
+          "objectId": "req-008",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-008",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-008",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-008",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-009",
+      "applicationId": "req-009",
+      "decisionId": "doc-009",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-92Б",
+      "sources": [
+        {
+          "objectId": "req-009",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-009",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-009",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-009",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-010",
+      "applicationId": "req-010",
+      "decisionId": "doc-010",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-39Б",
+      "sources": [
+        {
+          "objectId": "req-010",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-010",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-010",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-010",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-011",
+      "applicationId": "req-011",
+      "decisionId": "doc-011",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-81Б",
+      "sources": [
+        {
+          "objectId": "req-011",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-011",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-011",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-011",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-012",
+      "applicationId": "req-012",
+      "decisionId": "doc-012",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-92Б",
+      "sources": [
+        {
+          "objectId": "req-012",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-012",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-012",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-012",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-013",
+      "applicationId": "req-013",
+      "decisionId": "doc-013",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-91Б",
+      "sources": [
+        {
+          "objectId": "req-013",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-013",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-013",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-013",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-014",
+      "applicationId": "req-014",
+      "decisionId": "doc-014",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-86Б",
+      "sources": [
+        {
+          "objectId": "req-014",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-014",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-014",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-014",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-015",
+      "applicationId": "req-015",
+      "decisionId": "doc-015",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-63Б",
+      "sources": [
+        {
+          "objectId": "req-015",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-015",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-015",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-015",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-016",
+      "applicationId": "req-016",
+      "decisionId": "doc-016",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-85Б",
+      "sources": [
+        {
+          "objectId": "req-016",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-016",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-016",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-016",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-017",
+      "applicationId": "req-017",
+      "decisionId": "doc-017",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-36Б",
+      "sources": [
+        {
+          "objectId": "req-017",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-017",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-017",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-017",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-018",
+      "applicationId": "req-018",
+      "decisionId": "doc-018",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-17Б",
+      "sources": [
+        {
+          "objectId": "req-018",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-018",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-018",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-018",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-019",
+      "applicationId": "req-019",
+      "decisionId": "doc-019",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-85Б",
+      "sources": [
+        {
+          "objectId": "req-019",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-019",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-019",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-019",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-020",
+      "applicationId": "req-020",
+      "decisionId": "doc-020",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-15Б",
+      "sources": [
+        {
+          "objectId": "req-020",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-020",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-020",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-020",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-021",
+      "applicationId": "req-021",
+      "decisionId": "doc-021",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-30Б",
+      "sources": [
+        {
+          "objectId": "req-021",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-021",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-021",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-021",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-022",
+      "applicationId": "req-022",
+      "decisionId": "doc-022",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-47Б",
+      "sources": [
+        {
+          "objectId": "req-022",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-022",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-022",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-022",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-023",
+      "applicationId": "req-023",
+      "decisionId": "doc-023",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-31Б",
+      "sources": [
+        {
+          "objectId": "req-023",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-023",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-023",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-023",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-024",
+      "applicationId": "req-024",
+      "decisionId": "doc-024",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-14Б",
+      "sources": [
+        {
+          "objectId": "req-024",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-024",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-024",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-024",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-025",
+      "applicationId": "req-025",
+      "decisionId": "doc-025",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-40Б",
+      "sources": [
+        {
+          "objectId": "req-025",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-025",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-025",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-025",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-026",
+      "applicationId": "req-026",
+      "decisionId": "doc-026",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-49Б",
+      "sources": [
+        {
+          "objectId": "req-026",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-026",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-026",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-026",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-027",
+      "applicationId": "req-027",
+      "decisionId": "doc-027",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-14Б",
+      "sources": [
+        {
+          "objectId": "req-027",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-027",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-027",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-027",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-028",
+      "applicationId": "req-028",
+      "decisionId": "doc-028",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-41Б",
+      "sources": [
+        {
+          "objectId": "req-028",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-028",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-028",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-028",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-029",
+      "applicationId": "req-029",
+      "decisionId": "doc-029",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-94Б",
+      "sources": [
+        {
+          "objectId": "req-029",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-029",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-029",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-029",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-030",
+      "applicationId": "req-030",
+      "decisionId": "doc-030",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-47Б",
+      "sources": [
+        {
+          "objectId": "req-030",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-030",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-030",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-030",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-031",
+      "applicationId": "req-031",
+      "decisionId": "doc-031",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-39Б",
+      "sources": [
+        {
+          "objectId": "req-031",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-031",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-031",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-031",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-032",
+      "applicationId": "req-032",
+      "decisionId": "doc-032",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-57Б",
+      "sources": [
+        {
+          "objectId": "req-032",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-032",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-032",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-032",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-033",
+      "applicationId": "req-033",
+      "decisionId": "doc-033",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-76Б",
+      "sources": [
+        {
+          "objectId": "req-033",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-033",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-033",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-033",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-034",
+      "applicationId": "req-034",
+      "decisionId": "doc-034",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-82Б",
+      "sources": [
+        {
+          "objectId": "req-034",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-034",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-034",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-034",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-035",
+      "applicationId": "req-035",
+      "decisionId": "doc-035",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-88Б",
+      "sources": [
+        {
+          "objectId": "req-035",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-035",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-035",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-035",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-036",
+      "applicationId": "req-036",
+      "decisionId": "doc-036",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-81Б",
+      "sources": [
+        {
+          "objectId": "req-036",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-036",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-036",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-036",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-037",
+      "applicationId": "req-037",
+      "decisionId": "doc-037",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-43Б",
+      "sources": [
+        {
+          "objectId": "req-037",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-037",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-037",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-037",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-038",
+      "applicationId": "req-038",
+      "decisionId": "doc-038",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-34Б",
+      "sources": [
+        {
+          "objectId": "req-038",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-038",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-038",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-038",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-039",
+      "applicationId": "req-039",
+      "decisionId": "doc-039",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-97Б",
+      "sources": [
+        {
+          "objectId": "req-039",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-039",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-039",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-039",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-040",
+      "applicationId": "req-040",
+      "decisionId": "doc-040",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-12Б",
+      "sources": [
+        {
+          "objectId": "req-040",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-040",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-040",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-040",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-041",
+      "applicationId": "req-041",
+      "decisionId": "doc-041",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-91Б",
+      "sources": [
+        {
+          "objectId": "req-041",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-041",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-041",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-041",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-042",
+      "applicationId": "req-042",
+      "decisionId": "doc-042",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-80Б",
+      "sources": [
+        {
+          "objectId": "req-042",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-042",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-042",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-042",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-043",
+      "applicationId": "req-043",
+      "decisionId": "doc-043",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-14Б",
+      "sources": [
+        {
+          "objectId": "req-043",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-043",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-043",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-043",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-044",
+      "applicationId": "req-044",
+      "decisionId": "doc-044",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-68Б",
+      "sources": [
+        {
+          "objectId": "req-044",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-044",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-044",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-044",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-045",
+      "applicationId": "req-045",
+      "decisionId": "doc-045",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-85Б",
+      "sources": [
+        {
+          "objectId": "req-045",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-045",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-045",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-045",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-046",
+      "applicationId": "req-046",
+      "decisionId": "doc-046",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-34Б",
+      "sources": [
+        {
+          "objectId": "req-046",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-046",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-046",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-046",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-047",
+      "applicationId": "req-047",
+      "decisionId": "doc-047",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-84Б",
+      "sources": [
+        {
+          "objectId": "req-047",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-047",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-047",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-047",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-048",
+      "applicationId": "req-048",
+      "decisionId": "doc-048",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-61Б",
+      "sources": [
+        {
+          "objectId": "req-048",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-048",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-048",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-048",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-049",
+      "applicationId": "req-049",
+      "decisionId": "doc-049",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-79Б",
+      "sources": [
+        {
+          "objectId": "req-049",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-049",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-049",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-049",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-050",
+      "applicationId": "req-050",
+      "decisionId": "doc-050",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-75Б",
+      "sources": [
+        {
+          "objectId": "req-050",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-050",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-050",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-050",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-051",
+      "applicationId": "req-051",
+      "decisionId": "doc-051",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-78Б",
+      "sources": [
+        {
+          "objectId": "req-051",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-051",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-051",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-051",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-052",
+      "applicationId": "req-052",
+      "decisionId": "doc-052",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-16Б",
+      "sources": [
+        {
+          "objectId": "req-052",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-052",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-052",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-052",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-053",
+      "applicationId": "req-053",
+      "decisionId": "doc-053",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-86Б",
+      "sources": [
+        {
+          "objectId": "req-053",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-053",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-053",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-053",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-054",
+      "applicationId": "req-054",
+      "decisionId": "doc-054",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-21Б",
+      "sources": [
+        {
+          "objectId": "req-054",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-054",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-054",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-054",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-055",
+      "applicationId": "req-055",
+      "decisionId": "doc-055",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-82Б",
+      "sources": [
+        {
+          "objectId": "req-055",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-055",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-055",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-055",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-056",
+      "applicationId": "req-056",
+      "decisionId": "doc-056",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-78Б",
+      "sources": [
+        {
+          "objectId": "req-056",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-056",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-056",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-056",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-057",
+      "applicationId": "req-057",
+      "decisionId": "doc-057",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-42Б",
+      "sources": [
+        {
+          "objectId": "req-057",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-057",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-057",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-057",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-058",
+      "applicationId": "req-058",
+      "decisionId": "doc-058",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-24Б",
+      "sources": [
+        {
+          "objectId": "req-058",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-058",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-058",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-058",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-059",
+      "applicationId": "req-059",
+      "decisionId": "doc-059",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-20Б",
+      "sources": [
+        {
+          "objectId": "req-059",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-059",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-059",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-059",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-060",
+      "applicationId": "req-060",
+      "decisionId": "doc-060",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-59Б",
+      "sources": [
+        {
+          "objectId": "req-060",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-060",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-060",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-060",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-061",
+      "applicationId": "req-061",
+      "decisionId": "doc-061",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-97Б",
+      "sources": [
+        {
+          "objectId": "req-061",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-061",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-061",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-061",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-062",
+      "applicationId": "req-062",
+      "decisionId": "doc-062",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-85Б",
+      "sources": [
+        {
+          "objectId": "req-062",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-062",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-062",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-062",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-063",
+      "applicationId": "req-063",
+      "decisionId": "doc-063",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-98Б",
+      "sources": [
+        {
+          "objectId": "req-063",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-063",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-063",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-063",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-064",
+      "applicationId": "req-064",
+      "decisionId": "doc-064",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-25Б",
+      "sources": [
+        {
+          "objectId": "req-064",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-064",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-064",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-064",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-065",
+      "applicationId": "req-065",
+      "decisionId": "doc-065",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-55Б",
+      "sources": [
+        {
+          "objectId": "req-065",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-065",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-065",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-065",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-066",
+      "applicationId": "req-066",
+      "decisionId": "doc-066",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-88Б",
+      "sources": [
+        {
+          "objectId": "req-066",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-066",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-066",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-066",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-067",
+      "applicationId": "req-067",
+      "decisionId": "doc-067",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-27Б",
+      "sources": [
+        {
+          "objectId": "req-067",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-067",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-067",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-067",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-068",
+      "applicationId": "req-068",
+      "decisionId": "doc-068",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-42Б",
+      "sources": [
+        {
+          "objectId": "req-068",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-068",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-068",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-068",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-069",
+      "applicationId": "req-069",
+      "decisionId": "doc-069",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-46Б",
+      "sources": [
+        {
+          "objectId": "req-069",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-069",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-069",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-069",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-070",
+      "applicationId": "req-070",
+      "decisionId": "doc-070",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-46Б",
+      "sources": [
+        {
+          "objectId": "req-070",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-070",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-070",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-070",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-071",
+      "applicationId": "req-071",
+      "decisionId": "doc-071",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-56Б",
+      "sources": [
+        {
+          "objectId": "req-071",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-071",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-071",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-071",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-072",
+      "applicationId": "req-072",
+      "decisionId": "doc-072",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-79Б",
+      "sources": [
+        {
+          "objectId": "req-072",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-072",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-072",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-072",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-073",
+      "applicationId": "req-073",
+      "decisionId": "doc-073",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-37Б",
+      "sources": [
+        {
+          "objectId": "req-073",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-073",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-073",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-073",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-074",
+      "applicationId": "req-074",
+      "decisionId": "doc-074",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-33Б",
+      "sources": [
+        {
+          "objectId": "req-074",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-074",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-074",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-074",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-075",
+      "applicationId": "req-075",
+      "decisionId": "doc-075",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-85Б",
+      "sources": [
+        {
+          "objectId": "req-075",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-075",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-075",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-075",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-076",
+      "applicationId": "req-076",
+      "decisionId": "doc-076",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-22Б",
+      "sources": [
+        {
+          "objectId": "req-076",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-076",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-076",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-076",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-077",
+      "applicationId": "req-077",
+      "decisionId": "doc-077",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-43Б",
+      "sources": [
+        {
+          "objectId": "req-077",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-077",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-077",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-077",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-078",
+      "applicationId": "req-078",
+      "decisionId": "doc-078",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-99Б",
+      "sources": [
+        {
+          "objectId": "req-078",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-078",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-078",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-078",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-079",
+      "applicationId": "req-079",
+      "decisionId": "doc-079",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-57Б",
+      "sources": [
+        {
+          "objectId": "req-079",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-079",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-079",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-079",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-080",
+      "applicationId": "req-080",
+      "decisionId": "doc-080",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-42Б",
+      "sources": [
+        {
+          "objectId": "req-080",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-080",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-080",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-080",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-081",
+      "applicationId": "req-081",
+      "decisionId": "doc-081",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-88Б",
+      "sources": [
+        {
+          "objectId": "req-081",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-081",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-081",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-081",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-082",
+      "applicationId": "req-082",
+      "decisionId": "doc-082",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-33Б",
+      "sources": [
+        {
+          "objectId": "req-082",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-082",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-082",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-082",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-083",
+      "applicationId": "req-083",
+      "decisionId": "doc-083",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-82Б",
+      "sources": [
+        {
+          "objectId": "req-083",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-083",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-083",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-083",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-084",
+      "applicationId": "req-084",
+      "decisionId": "doc-084",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-69Б",
+      "sources": [
+        {
+          "objectId": "req-084",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-084",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-084",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-084",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-085",
+      "applicationId": "req-085",
+      "decisionId": "doc-085",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-65Б",
+      "sources": [
+        {
+          "objectId": "req-085",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-085",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-085",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-085",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-086",
+      "applicationId": "req-086",
+      "decisionId": "doc-086",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-31Б",
+      "sources": [
+        {
+          "objectId": "req-086",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-086",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-086",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-086",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-087",
+      "applicationId": "req-087",
+      "decisionId": "doc-087",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-42Б",
+      "sources": [
+        {
+          "objectId": "req-087",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-087",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-087",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-087",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-088",
+      "applicationId": "req-088",
+      "decisionId": "doc-088",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-27Б",
+      "sources": [
+        {
+          "objectId": "req-088",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-088",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-088",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-088",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-089",
+      "applicationId": "req-089",
+      "decisionId": "doc-089",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-41Б",
+      "sources": [
+        {
+          "objectId": "req-089",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-089",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-089",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-089",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-090",
+      "applicationId": "req-090",
+      "decisionId": "doc-090",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-15Б",
+      "sources": [
+        {
+          "objectId": "req-090",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-090",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-090",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-090",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-091",
+      "applicationId": "req-091",
+      "decisionId": "doc-091",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-99Б",
+      "sources": [
+        {
+          "objectId": "req-091",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-091",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-091",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-091",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-092",
+      "applicationId": "req-092",
+      "decisionId": "doc-092",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-50Б",
+      "sources": [
+        {
+          "objectId": "req-092",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-092",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-092",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-092",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-093",
+      "applicationId": "req-093",
+      "decisionId": "doc-093",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-11Б",
+      "sources": [
+        {
+          "objectId": "req-093",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-093",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-093",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-093",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-094",
+      "applicationId": "req-094",
+      "decisionId": "doc-094",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-41Б",
+      "sources": [
+        {
+          "objectId": "req-094",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-094",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-094",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-094",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-095",
+      "applicationId": "req-095",
+      "decisionId": "doc-095",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-74Б",
+      "sources": [
+        {
+          "objectId": "req-095",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-095",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-095",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-095",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-096",
+      "applicationId": "req-096",
+      "decisionId": "doc-096",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-84Б",
+      "sources": [
+        {
+          "objectId": "req-096",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-096",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-096",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-096",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-097",
+      "applicationId": "req-097",
+      "decisionId": "doc-097",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-30Б",
+      "sources": [
+        {
+          "objectId": "req-097",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-097",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-097",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-097",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-098",
+      "applicationId": "req-098",
+      "decisionId": "doc-098",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-69Б",
+      "sources": [
+        {
+          "objectId": "req-098",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-098",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-098",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-098",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-099",
+      "applicationId": "req-099",
+      "decisionId": "doc-099",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-58Б",
+      "sources": [
+        {
+          "objectId": "req-099",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-099",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-099",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-099",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    },
+    {
+      "proposalId": "proposal-100",
+      "applicationId": "req-100",
+      "decisionId": "doc-100",
+      "applicationVersion": "7",
+      "decisionVersion": "3",
+      "field": "groupCode",
+      "before": null,
+      "after": "ИУ5-39Б",
+      "sources": [
+        {
+          "objectId": "req-100",
+          "version": "7",
+          "field": "decisionId"
+        },
+        {
+          "objectId": "req-100",
+          "version": "7",
+          "field": "groupCode"
+        },
+        {
+          "objectId": "doc-100",
+          "version": "3",
+          "field": "approved"
+        },
+        {
+          "objectId": "doc-100",
+          "version": "3",
+          "field": "groupCode"
+        }
+      ]
+    }
+  ]
+}

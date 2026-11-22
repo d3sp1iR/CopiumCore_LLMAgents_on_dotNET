@@ -13,6 +13,9 @@ public interface IReviewStore
     Task SaveAsync(ProposalView proposal, CancellationToken cancellationToken = default);
     Task<ProposalView?> GetAsync(string id, CancellationToken cancellationToken = default);
     Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default);
+    Task<ReviewDecision?> BeginApplyAsync(string id, int expectedVersion, string idempotencyKey, string operationId, CancellationToken cancellationToken = default);
+    Task<ReviewDecision?> CompleteApplyAsync(string id, int applyingVersion, string idempotencyKey, string operationId, CancellationToken cancellationToken = default);
+    Task ReleaseApplyAsync(string id, int applyingVersion, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OutboxEvent>> PendingEventsAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<AuditEvent>> AuditAsync(string proposalId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<string>> ProposalsBySourceAsync(string sourceId, CancellationToken cancellationToken = default);
@@ -110,6 +113,64 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;
         return ReadProposal(reader);
+    }
+
+    public async Task<ReviewDecision?> BeginApplyAsync(string id, int expectedVersion, string idempotencyKey, string operationId, CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        var replay = connection.CreateCommand();
+        replay.CommandText = "SELECT response_json FROM idempotency WHERE key=$key";
+        replay.Parameters.AddWithValue("$key", idempotencyKey);
+        var replayJson = await replay.ExecuteScalarAsync(cancellationToken);
+        if (replayJson is string response) return JsonSerializer.Deserialize<ReviewDecision>(response);
+        var command = connection.CreateCommand();
+        command.CommandText = "UPDATE proposals SET status='applying',version=version+1,operation_id=$operation WHERE id=$id AND status='pendingReview' AND version=$version";
+        command.Parameters.AddWithValue("$operation", operationId);
+        command.Parameters.AddWithValue("$id", id);
+        command.Parameters.AddWithValue("$version", expectedVersion);
+        if (await command.ExecuteNonQueryAsync(cancellationToken) != 1) return null;
+        return new ReviewDecision(id, "applying", operationId, null, expectedVersion + 1);
+    }
+
+    public async Task<ReviewDecision?> CompleteApplyAsync(string id, int applyingVersion, string idempotencyKey, string operationId, CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
+        var update = connection.CreateCommand();
+        update.Transaction = transaction;
+        update.CommandText = "UPDATE proposals SET status='approved' WHERE id=$id AND status='applying' AND version=$version AND operation_id=$operation";
+        update.Parameters.AddWithValue("$id", id);
+        update.Parameters.AddWithValue("$version", applyingVersion);
+        update.Parameters.AddWithValue("$operation", operationId);
+        if (await update.ExecuteNonQueryAsync(cancellationToken) != 1) return null;
+        var result = new ReviewDecision(id, "approved", operationId, null, applyingVersion);
+        var insert = connection.CreateCommand();
+        insert.Transaction = transaction;
+        insert.CommandText = "INSERT INTO idempotency(key,proposal_id,decision,response_json) VALUES($key,$id,'approve',$response); INSERT INTO outbox(event_id,type,aggregate_id,payload) VALUES($event,'llm.proposal.approved',$id,$payload); INSERT INTO audit(event_id,proposal_id,action,status,operation_id,created_at) VALUES($audit,$id,'approve','approved',$operation,$created);";
+        insert.Parameters.AddWithValue("$key", idempotencyKey);
+        insert.Parameters.AddWithValue("$id", id);
+        insert.Parameters.AddWithValue("$response", JsonSerializer.Serialize(result));
+        insert.Parameters.AddWithValue("$event", $"evt-{id}-{applyingVersion}");
+        insert.Parameters.AddWithValue("$payload", JsonSerializer.Serialize(result));
+        insert.Parameters.AddWithValue("$audit", $"audit-{id}-{applyingVersion}");
+        insert.Parameters.AddWithValue("$operation", operationId);
+        insert.Parameters.AddWithValue("$created", DateTimeOffset.UtcNow.ToString("O"));
+        await insert.ExecuteNonQueryAsync(cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return result;
+    }
+
+    public async Task ReleaseApplyAsync(string id, int applyingVersion, CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
+        command.CommandText = "UPDATE proposals SET status='pendingReview',version=version-1,operation_id=NULL WHERE id=$id AND status='applying' AND version=$version";
+        command.Parameters.AddWithValue("$id", id);
+        command.Parameters.AddWithValue("$version", applyingVersion);
+        await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
     public async Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default)

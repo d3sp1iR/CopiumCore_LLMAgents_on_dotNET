@@ -1,0 +1,53 @@
+{
+  "seed": 17017,
+  "fixture": "docs/at17/fixture.json",
+  "expectedStaleProposalIds": [
+    "proposal-042"
+  ],
+  "validation": {
+    "B_equals_C_stale_set": true,
+    "C_less_reads_than_B": true,
+    "A_is_simulation": true
+  },
+  "results": [
+    {
+      "strategy": "A-full-repeat-model-cost",
+      "runs": 3,
+      "medianMs": 0.0172,
+      "samplesMs": [
+        0.0434,
+        0.0172,
+        0.0112
+      ],
+      "graphReads": 400,
+      "llmCalls": 100,
+      "staleProposals": 1
+    },
+    {
+      "strategy": "B-full-scan-no-llm",
+      "runs": 3,
+      "medianMs": 0.0295,
+      "samplesMs": [
+        0.0469,
+        0.0225,
+        0.0295
+      ],
+      "graphReads": 400,
+      "llmCalls": 0,
+      "staleProposals": 1
+    },
+    {
+      "strategy": "C-provenance-index",
+      "runs": 3,
+      "medianMs": 0.0693,
+      "samplesMs": [
+        0.0922,
+        0.0693,
+        0.065
+      ],
+      "graphReads": 1,
+      "llmCalls": 0,
+      "staleProposals": 1
+    }
+  ]
+}
