@@ -46,3 +46,11 @@
 - `dotnet test CopiumCore.slnx -c Release --no-restore` на SDK 10.0.404: 47 тестов прошли, включая 25 проверок валидатора runtime.
 - Результат подтверждает демонстрационный вертикальный срез E1, но не полноценную приёмку всех требований ТЗ. Предыдущие попытки вернули `insufficientEvidence` или ошибку; генерация модели нестабильна. В успешном ответе свободный текст ошибочно указал версию «-3», хотя структурированное доказательство содержит `3`. Свободное описание модели не проверяется на достоверность; доверять следует проверенным структурированным полям.
 - Данные и предложения существуют только в памяти, авторизация и применение отсутствуют, `/ready` остаётся 503; граф использует поля-ссылки вместо ребра `supportedBy`.
+
+## 2026-11-22 — E2: SQLite review и CAS-срез
+
+- Добавлен опциональный профиль `CopiumCore:UseSqlite`: SQLite хранит proposals, версии решений, idempotency records и outbox events. E1 остаётся in-memory профилем.
+- Review API поддерживает `If-Match`, `Idempotency-Key`, approve/reject, повтор решения и конфликт устаревшей версии. Запись proposal в SQLite выполняется до публикации run как `succeeded`, чтобы GET завершённого запуска не видел незаписанную карточку.
+- Добавлен application-порт `IChangeWriter` и HTTP-адаптер с `expectedVersion` и устойчивым `operationId`. Test Graph API теперь имеет stateful CAS endpoint `PUT /objects/{id}/attributes/{field}` с защитой от конкурентной версии и повторного эффекта.
+- Проверка: CI для [f88a905](https://github.com/d3sp1iR/CopiumCore_LLMAgents_on_dotNET/actions/runs/45068741221) прошёл: restore, Release build и все тесты solution. Последний CAS-подключающий коммит ещё требует отдельного CI-прогона.
+- Ограничения: run/session state ещё не переживает рестарт; Graph CAS пока подключён только при наличии `Graph:Url`; audit, delivery worker, второй provider, provenance index, staleness API и AT-17 ещё не реализованы.

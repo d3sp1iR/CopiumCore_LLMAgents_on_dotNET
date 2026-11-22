@@ -11,7 +11,7 @@ public interface IReviewStore
     Task InitializeAsync(CancellationToken cancellationToken = default);
     Task SaveAsync(ProposalView proposal, CancellationToken cancellationToken = default);
     Task<ProposalView?> GetAsync(string id, CancellationToken cancellationToken = default);
-    Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, CancellationToken cancellationToken = default);
+    Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OutboxEvent>> PendingEventsAsync(CancellationToken cancellationToken = default);
     Task MarkPublishedAsync(string eventId, CancellationToken cancellationToken = default);
 }
@@ -88,7 +88,7 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         return ReadProposal(reader);
     }
 
-    public async Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, CancellationToken cancellationToken = default)
+    public async Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default)
     {
         await InitializeAsync(cancellationToken);
         await using var connection = await OpenAsync(cancellationToken);
@@ -105,7 +105,7 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         update.CommandText = "UPDATE proposals SET status=$status,version=version+1,decision_reason=$reason,operation_id=$operation WHERE id=$id AND status='pendingReview' AND version=$version";
         update.Parameters.AddWithValue("$status", decision == "approve" ? "approved" : "rejected");
         update.Parameters.AddWithValue("$reason", (object?)reason ?? DBNull.Value);
-        var operationId = decision == "approve" ? $"op-{Guid.NewGuid():N}" : null;
+        var operationId = decision == "approve" ? operationIdOverride ?? $"op-{Guid.NewGuid():N}" : null;
         update.Parameters.AddWithValue("$operation", (object?)operationId ?? DBNull.Value);
         update.Parameters.AddWithValue("$id", id);
         update.Parameters.AddWithValue("$version", expectedVersion);

@@ -1,4 +1,6 @@
 using CopiumCore.Api;
+using CopiumCore.Application.Graph;
+using CopiumCore.Infrastructure.Graph;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
 var app = ApiApp.Build(args);
@@ -13,6 +15,14 @@ public static class ApiApp
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
             SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
         builder.Services.AddSingleton<DemoStore>();
+        if (builder.Configuration["Graph:Url"] is { Length: > 0 } configuredGraphUrl)
+        {
+            var graphBase = new Uri(configuredGraphUrl.TrimEnd('/') + "/");
+            builder.Services.AddSingleton<CopiumCore.Application.Graph.IGraphReader>(_ =>
+                new DemoGraphReader(new HttpClient { BaseAddress = graphBase }));
+            builder.Services.AddSingleton<IChangeWriter>(_ =>
+                new HttpChangeWriter(new HttpClient { BaseAddress = graphBase }));
+        }
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
         {
             builder.Services.AddSingleton<SqliteReviewStore>();
@@ -94,8 +104,20 @@ public static class ApiApp
             if (!int.TryParse(request.Headers.IfMatch.ToString().Trim('"', 'W', '/'), out var version)) return Problem(context, 428, "PRECONDITION_REQUIRED");
             var key = request.Headers["Idempotency-Key"].ToString();
             if (string.IsNullOrWhiteSpace(key)) return Problem(context, 400, "VALIDATION_ERROR");
-            var result = await reviewStore.DecideAsync(id, "approve", null, version, key, context.RequestAborted);
-            return result is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Accepted($"/api/llm/v1/proposals/{id}", result);
+            var proposal = await reviewStore.GetAsync(id, context.RequestAborted);
+            if (proposal is null) return Problem(context, 404, "NOT_FOUND");
+            var writer = services.GetService<IChangeWriter>();
+            ChangeReceipt? receipt = null;
+            if (writer is not null)
+            {
+                var expectedTargetVersion = proposal.Evidence.FirstOrDefault(e => e.ObjectId == proposal.TargetObjectId)?.Version;
+                if (expectedTargetVersion is null) return Problem(context, 409, "PROVENANCE_CONFLICT");
+                var operationId = $"op-{id}-{version}";
+                receipt = await writer.SetAttributeAsync(new ChangeRequest(proposal.TargetObjectId, proposal.Field, proposal.After, expectedTargetVersion, operationId), context.RequestAborted);
+                if (receipt is null) return Problem(context, 409, "GRAPH_CONFLICT");
+            }
+            var result = await reviewStore.DecideAsync(id, "approve", null, version, key, receipt?.OperationId, context.RequestAborted);
+            return result is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Accepted($"/api/llm/v1/proposals/{id}", new { decision = result, change = receipt });
         });
         api.MapPost("/proposals/{id}/reject", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>
         {
