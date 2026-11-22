@@ -97,6 +97,12 @@ public static class ApiApp
             var proposal = reviewStore is null ? store.GetProposal(id) : await reviewStore.GetAsync(id, context.RequestAborted);
             return proposal is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(proposal);
         });
+        api.MapGet("/proposals/{id}/audit", async (string id, HttpContext context, IServiceProvider services) =>
+        {
+            var reviewStore = services.GetService<IReviewStore>();
+            if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
+            return Results.Ok(new { items = await reviewStore.AuditAsync(id, context.RequestAborted) });
+        });
         api.MapPost("/proposals/{id}/approve", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>
         {
             var reviewStore = services.GetService<IReviewStore>();

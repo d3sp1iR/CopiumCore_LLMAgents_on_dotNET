@@ -93,6 +93,10 @@ public sealed class ApiTests
             approve.Headers.TryAddWithoutValidation("If-Match", "1"); approve.Headers.Add("Idempotency-Key", "approve-1");
             var decision = await client.SendAsync(approve);
             Assert.Equal(HttpStatusCode.Accepted, decision.StatusCode);
+            var audit = await client.GetFromJsonAsync<JsonElement>("/api/llm/v1/proposals/proposal-sqlite/audit");
+            Assert.Equal(1, audit.GetProperty("items").GetArrayLength());
+            Assert.Equal("approve", audit.GetProperty("items")[0].GetProperty("action").GetString());
+            Assert.Equal("approved", audit.GetProperty("items")[0].GetProperty("status").GetString());
             using var replay = new HttpRequestMessage(HttpMethod.Post, "/api/llm/v1/proposals/proposal-sqlite/approve");
             replay.Headers.TryAddWithoutValidation("If-Match", "1"); replay.Headers.Add("Idempotency-Key", "approve-1");
             Assert.Equal(HttpStatusCode.Accepted, (await client.SendAsync(replay)).StatusCode);

@@ -5,6 +5,7 @@ namespace CopiumCore.Api;
 
 public sealed record ReviewDecision(string ProposalId, string Status, string? OperationId, string? Reason, int Version);
 public sealed record OutboxEvent(string EventId, string Type, string AggregateId, string Payload, int Attempts, bool Published);
+public sealed record AuditEvent(string EventId, string ProposalId, string Action, string Status, string? OperationId, string CreatedAt);
 
 public interface IReviewStore
 {
@@ -13,6 +14,7 @@ public interface IReviewStore
     Task<ProposalView?> GetAsync(string id, CancellationToken cancellationToken = default);
     Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OutboxEvent>> PendingEventsAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<AuditEvent>> AuditAsync(string proposalId, CancellationToken cancellationToken = default);
     Task MarkPublishedAsync(string eventId, CancellationToken cancellationToken = default);
 }
 
@@ -45,6 +47,9 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
             CREATE TABLE IF NOT EXISTS idempotency (
               key TEXT PRIMARY KEY, proposal_id TEXT NOT NULL, decision TEXT NOT NULL,
               response_json TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS audit (
+              event_id TEXT PRIMARY KEY, proposal_id TEXT NOT NULL, action TEXT NOT NULL,
+              status TEXT NOT NULL, operation_id TEXT, created_at TEXT NOT NULL);
             """;
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -113,10 +118,14 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         var result = new ReviewDecision(id, decision == "approve" ? "approved" : "rejected", operationId, reason, expectedVersion + 1);
         var insert = connection.CreateCommand();
         insert.Transaction = transaction;
-        insert.CommandText = "INSERT INTO idempotency(key,proposal_id,decision,response_json) VALUES($key,$id,$decision,$response); INSERT INTO outbox(event_id,type,aggregate_id,payload) VALUES($event,$type,$id,$payload);";
+        var eventId = $"evt-{id}-{result.Version}";
+        var auditId = $"audit-{id}-{result.Version}";
+        insert.CommandText = "INSERT INTO idempotency(key,proposal_id,decision,response_json) VALUES($key,$id,$decision,$response); INSERT INTO outbox(event_id,type,aggregate_id,payload) VALUES($event,$type,$id,$payload); INSERT INTO audit(event_id,proposal_id,action,status,operation_id,created_at) VALUES($audit,$id,$decision,$status,$operation,$created);";
         insert.Parameters.AddWithValue("$key", idempotencyKey); insert.Parameters.AddWithValue("$id", id); insert.Parameters.AddWithValue("$decision", decision);
-        insert.Parameters.AddWithValue("$response", JsonSerializer.Serialize(result)); insert.Parameters.AddWithValue("$event", $"evt-{id}-{result.Version}");
+        insert.Parameters.AddWithValue("$response", JsonSerializer.Serialize(result)); insert.Parameters.AddWithValue("$event", eventId);
         insert.Parameters.AddWithValue("$type", decision == "approve" ? "llm.proposal.approved" : "llm.proposal.rejected"); insert.Parameters.AddWithValue("$payload", JsonSerializer.Serialize(result));
+        insert.Parameters.AddWithValue("$audit", auditId); insert.Parameters.AddWithValue("$status", result.Status);
+        insert.Parameters.AddWithValue("$operation", (object?)operationId ?? DBNull.Value); insert.Parameters.AddWithValue("$created", DateTimeOffset.UtcNow.ToString("O"));
         await insert.ExecuteNonQueryAsync(cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return result;
@@ -128,6 +137,20 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         var command = connection.CreateCommand(); command.CommandText = "SELECT event_id,type,aggregate_id,payload,attempts,published FROM outbox WHERE published=0 ORDER BY rowid";
         await using var reader = await command.ExecuteReaderAsync(cancellationToken); var result = new List<OutboxEvent>();
         while (await reader.ReadAsync(cancellationToken)) result.Add(new(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetInt32(4), reader.GetBoolean(5)));
+        return result;
+    }
+
+    public async Task<IReadOnlyList<AuditEvent>> AuditAsync(string proposalId, CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT event_id,proposal_id,action,status,operation_id,created_at FROM audit WHERE proposal_id=$id ORDER BY created_at";
+        command.Parameters.AddWithValue("$id", proposalId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var result = new List<AuditEvent>();
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(new AuditEvent(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.IsDBNull(4) ? null : reader.GetString(4), reader.GetString(5)));
         return result;
     }
 
