@@ -106,10 +106,10 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
 
     public async Task ExecuteAsync(RunEntry run, IAgentExecutor executor, CancellationToken cancellationToken, IReviewStore? reviewStore = null, IRunStore? runStore = null)
     {
-        lock (gate) run.Status = "running";
-        if (runStore is not null) await runStore.SaveRunAsync(run, cancellationToken);
         try
         {
+            lock (gate) run.Status = "running";
+            if (runStore is not null) await runStore.SaveRunAsync(run, CancellationToken.None);
             var result = await executor.ExecuteAsync(new(run.Id, "demo-user", run.Request.SessionId, run.Request.TaskId, run.Request.Input, run.Agent), cancellationToken);
             if (result is null || result.Evidence is null || result.Proposals is null || result.Summary is null ||
                 result.Outcome is not ("answered" or "insufficientEvidence" or "proposalCreated") ||
