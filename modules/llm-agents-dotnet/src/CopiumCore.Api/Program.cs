@@ -11,7 +11,7 @@ public static class ApiApp
         var builder = WebApplication.CreateBuilder(args);
         var demo = builder.Configuration.GetValue<bool>("CopiumCore:Demo");
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
-            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_dynamic_cdecl());
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
         builder.Services.AddSingleton<DemoStore>();
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
         {
