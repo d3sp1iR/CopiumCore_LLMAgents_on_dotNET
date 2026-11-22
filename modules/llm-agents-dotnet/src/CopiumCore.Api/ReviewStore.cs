@@ -15,6 +15,7 @@ public interface IReviewStore
     Task<ReviewDecision?> DecideAsync(string id, string decision, string? reason, int expectedVersion, string idempotencyKey, string? operationIdOverride = null, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<OutboxEvent>> PendingEventsAsync(CancellationToken cancellationToken = default);
     Task<IReadOnlyList<AuditEvent>> AuditAsync(string proposalId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<string>> ProposalsBySourceAsync(string sourceId, CancellationToken cancellationToken = default);
     Task MarkPublishedAsync(string eventId, CancellationToken cancellationToken = default);
 }
 
@@ -50,6 +51,9 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
             CREATE TABLE IF NOT EXISTS audit (
               event_id TEXT PRIMARY KEY, proposal_id TEXT NOT NULL, action TEXT NOT NULL,
               status TEXT NOT NULL, operation_id TEXT, created_at TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS provenance_index (
+              source_id TEXT NOT NULL, source_version TEXT NOT NULL,
+              proposal_id TEXT NOT NULL, field TEXT, PRIMARY KEY(source_id, source_version, proposal_id, field));
             """;
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
@@ -58,7 +62,9 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
     {
         await InitializeAsync(cancellationToken);
         await using var connection = await OpenAsync(cancellationToken);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
         var command = connection.CreateCommand();
+        command.Transaction = transaction;
         command.CommandText = """
             INSERT OR IGNORE INTO proposals
             (id,run_id,status,target_object_id,field,before_json,after_json,reason,evidence_json)
@@ -79,6 +85,19 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         command.Parameters.AddWithValue("$type", "llm.proposal.created");
         command.Parameters.AddWithValue("$payload", JsonSerializer.Serialize(new { proposalId = proposal.Id, runId = proposal.RunId }));
         await command.ExecuteNonQueryAsync(cancellationToken);
+
+        foreach (var (source, index) in proposal.Evidence.Select((source, index) => (source, index)))
+        {
+            var indexCommand = connection.CreateCommand();
+            indexCommand.Transaction = transaction;
+            indexCommand.CommandText = "INSERT OR IGNORE INTO provenance_index(source_id,source_version,proposal_id,field) VALUES($source,$version,$proposal,$field)";
+            indexCommand.Parameters.AddWithValue("$source", source.ObjectId);
+            indexCommand.Parameters.AddWithValue("$version", source.Version);
+            indexCommand.Parameters.AddWithValue("$proposal", proposal.Id);
+            indexCommand.Parameters.AddWithValue("$field", (object?)source.Field ?? DBNull.Value);
+            await indexCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+        await transaction.CommitAsync(cancellationToken);
     }
 
     public async Task<ProposalView?> GetAsync(string id, CancellationToken cancellationToken = default)
@@ -137,6 +156,19 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
         var command = connection.CreateCommand(); command.CommandText = "SELECT event_id,type,aggregate_id,payload,attempts,published FROM outbox WHERE published=0 ORDER BY rowid";
         await using var reader = await command.ExecuteReaderAsync(cancellationToken); var result = new List<OutboxEvent>();
         while (await reader.ReadAsync(cancellationToken)) result.Add(new(reader.GetString(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetInt32(4), reader.GetBoolean(5)));
+        return result;
+    }
+
+    public async Task<IReadOnlyList<string>> ProposalsBySourceAsync(string sourceId, CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
+        command.CommandText = "SELECT DISTINCT proposal_id FROM provenance_index WHERE source_id=$source ORDER BY proposal_id";
+        command.Parameters.AddWithValue("$source", sourceId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var result = new List<string>();
+        while (await reader.ReadAsync(cancellationToken)) result.Add(reader.GetString(0));
         return result;
     }
 

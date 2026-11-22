@@ -132,6 +132,12 @@ public static class ApiApp
             if (!store.Cancel(id)) return Problem(context, 409, "RUN_NOT_CANCELLABLE");
             return Results.Accepted($"/api/llm/v1/runs/{id}", new { runId = id, status = "cancellationRequested" });
         });
+        api.MapGet("/proposals/by-source/{sourceId}", async (string sourceId, HttpContext context, IServiceProvider services) =>
+        {
+            var reviewStore = services.GetService<IReviewStore>();
+            if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
+            return Results.Ok(new { items = await reviewStore.ProposalsBySourceAsync(sourceId, context.RequestAborted) });
+        });
         api.MapGet("/proposals/{id}", async (string id, DemoStore store, HttpContext context, IServiceProvider services) =>
         {
             var reviewStore = services.GetService<IReviewStore>();

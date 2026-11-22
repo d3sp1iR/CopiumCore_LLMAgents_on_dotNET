@@ -95,6 +95,8 @@ public sealed class ApiTests
             Assert.Equal(HttpStatusCode.OK, proposalResponse.StatusCode);
             var proposal = await proposalResponse.Content.ReadFromJsonAsync<JsonElement>();
             Assert.Equal(1, proposal.GetProperty("version").GetInt32());
+            var indexed = await client.GetFromJsonAsync<JsonElement>("/api/llm/v1/proposals/by-source/doc-9");
+            Assert.Contains("proposal-sqlite", indexed.GetProperty("items").EnumerateArray().Select(item => item.GetString()));
             for (var i = 0; i < 100 && sink.Events.Count == 0; i++) await Task.Delay(20);
             Assert.Contains(sink.Events, item => item.Type == "llm.proposal.created" && item.AggregateId == "proposal-sqlite");
             var createdCount = sink.Events.Count(item => item.EventId == "evt-proposal-sqlite");
