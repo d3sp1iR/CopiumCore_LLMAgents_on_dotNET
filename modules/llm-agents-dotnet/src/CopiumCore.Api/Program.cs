@@ -120,6 +120,17 @@ public static class ApiApp
             if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
             return Results.Ok(new { items = await reviewStore.AuditAsync(id, context.RequestAborted) });
         });
+        api.MapGet("/proposals/{id}/staleness", async (string id, HttpContext context, IServiceProvider services) =>
+        {
+            var reviewStore = services.GetService<IReviewStore>();
+            if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
+            var proposal = await reviewStore.GetAsync(id, context.RequestAborted);
+            if (proposal is null) return Problem(context, 404, "NOT_FOUND");
+            var graphReader = services.GetService<IGraphReader>();
+            if (graphReader is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
+            var reasons = await StalenessReasonsAsync(proposal, graphReader, context.RequestAborted);
+            return Results.Ok(new { stale = reasons.Count != 0, reasons });
+        });
         api.MapPost("/proposals/{id}/approve", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>
         {
             var reviewStore = services.GetService<IReviewStore>();
@@ -129,6 +140,12 @@ public static class ApiApp
             if (string.IsNullOrWhiteSpace(key)) return Problem(context, 400, "VALIDATION_ERROR");
             var proposal = await reviewStore.GetAsync(id, context.RequestAborted);
             if (proposal is null) return Problem(context, 404, "NOT_FOUND");
+            var graphReader = services.GetService<IGraphReader>();
+            if (graphReader is not null)
+            {
+                var reasons = await StalenessReasonsAsync(proposal, graphReader, context.RequestAborted);
+                if (reasons.Count != 0) return Problem(context, 409, "PROVENANCE_CONFLICT");
+            }
             var writer = services.GetService<IChangeWriter>();
             ChangeReceipt? receipt = null;
             if (writer is not null)
@@ -155,6 +172,29 @@ public static class ApiApp
         return app;
     }
 
+    private static async Task<IReadOnlyList<StalenessReason>> StalenessReasonsAsync(ProposalView proposal, IGraphReader graphReader, CancellationToken cancellationToken)
+    {
+        var reasons = new List<StalenessReason>();
+        foreach (var source in proposal.Evidence.DistinctBy(x => new { x.ObjectId, x.Version }))
+        {
+            try
+            {
+                var current = await graphReader.GetObjectAsync(source.ObjectId, new GraphReadContext("reviewer", $"staleness-{proposal.Id}"), cancellationToken);
+                if (current is null)
+                    reasons.Add(new(source.ObjectId, source.Version, null, "SOURCE_NOT_FOUND"));
+                else if (!string.Equals(current.Version, source.Version, StringComparison.Ordinal))
+                    reasons.Add(new(source.ObjectId, source.Version, current.Version, "SOURCE_VERSION_CHANGED"));
+            }
+            catch (Exception) when (!cancellationToken.IsCancellationRequested)
+            {
+                reasons.Add(new(source.ObjectId, source.Version, null, "SOURCE_UNAVAILABLE"));
+            }
+        }
+        return reasons;
+    }
+
     private static IResult Problem(HttpContext context, int status, string code) => Results.Problem(
         statusCode: status, title: code, extensions: new Dictionary<string, object?> { ["code"] = code, ["traceId"] = context.TraceIdentifier });
 }
+
+public sealed record StalenessReason(string ObjectId, string ExpectedVersion, string? ActualVersion, string Code);
