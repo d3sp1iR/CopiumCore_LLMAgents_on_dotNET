@@ -11,6 +11,9 @@ public sealed class RunEntry(string id, RunCreate request, AgentDefinition agent
     public string Status { get; set; } = "queued";
     public RunResult? Result { get; set; }
     public string? ErrorCode { get; set; }
+    public DateTimeOffset? Deadline { get; } = request.TimeoutMs is > 0
+        ? DateTimeOffset.UtcNow.AddMilliseconds(request.TimeoutMs.Value)
+        : null;
 }
 
 public sealed class DemoStore(ILogger<DemoStore> logger)
@@ -88,6 +91,11 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
         lock (gate)
         {
             var cancellation = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
+            if (runs.TryGetValue(id, out var run) && run.Deadline is { } deadline)
+            {
+                var remaining = deadline - DateTimeOffset.UtcNow;
+                cancellation.CancelAfter(remaining <= TimeSpan.Zero ? TimeSpan.Zero : remaining);
+            }
             cancellations[id] = cancellation;
             return cancellation.Token;
         }
@@ -129,7 +137,18 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
-            lock (gate) { run.Status = "cancelled"; }
+            lock (gate)
+            {
+                if (run.Deadline is { } deadline && deadline <= DateTimeOffset.UtcNow)
+                {
+                    run.Status = "timedOut";
+                    run.ErrorCode = "RUN_TIMEOUT";
+                }
+                else
+                {
+                    run.Status = "cancelled";
+                }
+            }
             if (runStore is not null) await runStore.SaveRunAsync(run, CancellationToken.None);
         }
         catch (Exception ex)

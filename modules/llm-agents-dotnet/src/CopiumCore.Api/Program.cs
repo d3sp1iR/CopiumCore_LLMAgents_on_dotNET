@@ -65,7 +65,9 @@ public static class ApiApp
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
         {
             app.Services.GetRequiredService<IReviewStore>().InitializeAsync().GetAwaiter().GetResult();
-            app.Services.GetRequiredService<IRunStore>().InitializeAsync().GetAwaiter().GetResult();
+            var runStore = app.Services.GetRequiredService<IRunStore>();
+            runStore.InitializeAsync().GetAwaiter().GetResult();
+            runStore.RecoverInterruptedAsync().GetAwaiter().GetResult();
         }
 
         app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));

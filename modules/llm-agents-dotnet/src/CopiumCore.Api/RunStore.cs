@@ -9,6 +9,7 @@ public interface IRunStore
     Task SaveSessionAsync(DemoSession session, CancellationToken cancellationToken = default);
     Task SaveRunAsync(RunEntry run, CancellationToken cancellationToken = default);
     Task<RunView?> GetRunAsync(string id, CancellationToken cancellationToken = default);
+    Task RecoverInterruptedAsync(CancellationToken cancellationToken = default);
 }
 
 public sealed class SqliteRunStore(IConfiguration configuration) : IRunStore
@@ -30,9 +31,23 @@ public sealed class SqliteRunStore(IConfiguration configuration) : IRunStore
             CREATE TABLE IF NOT EXISTS runs (
               id TEXT PRIMARY KEY, agent_id TEXT NOT NULL, session_id TEXT NOT NULL,
               task_id TEXT NOT NULL, input TEXT NOT NULL, status TEXT NOT NULL,
-              result_json TEXT, error_code TEXT);
+              deadline TEXT, result_json TEXT, error_code TEXT);
             """;
         await command.ExecuteNonQueryAsync(cancellationToken);
+        var columns = connection.CreateCommand();
+        columns.CommandText = "PRAGMA table_info(runs)";
+        var hasDeadline = false;
+        await using (var reader = await columns.ExecuteReaderAsync(cancellationToken))
+        {
+            while (await reader.ReadAsync(cancellationToken))
+                if (string.Equals(reader.GetString(1), "deadline", StringComparison.OrdinalIgnoreCase)) hasDeadline = true;
+        }
+        if (!hasDeadline)
+        {
+            var migrate = connection.CreateCommand();
+            migrate.CommandText = "ALTER TABLE runs ADD COLUMN deadline TEXT";
+            await migrate.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     public async Task SaveSessionAsync(DemoSession session, CancellationToken cancellationToken = default)
@@ -52,9 +67,9 @@ public sealed class SqliteRunStore(IConfiguration configuration) : IRunStore
         await using var connection = await OpenAsync(cancellationToken);
         var command = connection.CreateCommand();
         command.CommandText = """
-            INSERT INTO runs(id,agent_id,session_id,task_id,input,status,result_json,error_code)
-            VALUES($id,$agent,$session,$task,$input,$status,$result,$error)
-            ON CONFLICT(id) DO UPDATE SET status=$status,result_json=$result,error_code=$error;
+            INSERT INTO runs(id,agent_id,session_id,task_id,input,status,deadline,result_json,error_code)
+            VALUES($id,$agent,$session,$task,$input,$status,$deadline,$result,$error)
+            ON CONFLICT(id) DO UPDATE SET status=$status,deadline=$deadline,result_json=$result,error_code=$error;
             """;
         command.Parameters.AddWithValue("$id", run.Id);
         command.Parameters.AddWithValue("$agent", run.Request.AgentId);
@@ -62,8 +77,18 @@ public sealed class SqliteRunStore(IConfiguration configuration) : IRunStore
         command.Parameters.AddWithValue("$task", run.Request.TaskId);
         command.Parameters.AddWithValue("$input", run.Request.Input);
         command.Parameters.AddWithValue("$status", run.Status);
+        command.Parameters.AddWithValue("$deadline", (object?)run.Deadline?.ToString("O") ?? DBNull.Value);
         command.Parameters.AddWithValue("$result", (object?)JsonSerializer.Serialize(run.Result) ?? DBNull.Value);
         command.Parameters.AddWithValue("$error", (object?)run.ErrorCode ?? DBNull.Value);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    public async Task RecoverInterruptedAsync(CancellationToken cancellationToken = default)
+    {
+        await InitializeAsync(cancellationToken);
+        await using var connection = await OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
+        command.CommandText = "UPDATE runs SET status='failed',error_code='RUN_INTERRUPTED' WHERE status IN ('queued','running')";
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 

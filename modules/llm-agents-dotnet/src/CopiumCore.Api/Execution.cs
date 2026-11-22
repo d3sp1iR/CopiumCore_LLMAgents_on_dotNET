@@ -7,7 +7,7 @@ public sealed record AgentCreate(string Name, string Purpose, string ModelProfil
 public sealed record AgentDefinition(string Id, string Version, string Name, string Purpose, string ModelProfile,
     string SystemInstruction, string[] ToolAllowlist, JsonElement MemoryPolicy, JsonElement AccessPolicy, bool Enabled);
 public sealed record SessionCreate(string AgentId);
-public sealed record RunCreate(string AgentId, string SessionId, string TaskId, string Input);
+public sealed record RunCreate(string AgentId, string SessionId, string TaskId, string Input, int? TimeoutMs = null);
 public sealed record SourceRef(string ObjectId, string Version, string? Field = null);
 public sealed record RunResult(string Outcome, string Summary, SourceRef[] Evidence, string[] ProposalIds);
 public sealed record PreparedProposal(string Id, string TargetObjectId, string Field, JsonElement Before, JsonElement After, string Reason, SourceRef[] Evidence);
