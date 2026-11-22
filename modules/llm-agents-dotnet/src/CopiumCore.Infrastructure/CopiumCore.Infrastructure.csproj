@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.AI.Abstractions" Version="10.8.0" />
     <ProjectReference Include="../CopiumCore.Application/CopiumCore.Application.csproj" />
   </ItemGroup>
 </Project>
