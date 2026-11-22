@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using CopiumCore.Api;
+using CopiumCore.Application.Graph;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
@@ -111,6 +112,45 @@ public sealed class ApiTests
     }
 
     [Fact]
+    public async Task StalenessExplainsChangedEvidenceVersion()
+    {
+        var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
+        try
+        {
+            var executor = new ImmediateExecutor();
+            await using var app = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"], services =>
+            {
+                services.AddSingleton<IAgentExecutor>(executor);
+                services.AddSingleton<IGraphReader, ChangedVersionGraphReader>();
+            });
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            using var client = new HttpClient { BaseAddress = new Uri(address) };
+            var agent = await (await client.PostAsJsonAsync("/api/llm/v1/agents", new { name = "agent", purpose = "test", modelProfile = "demo", systemInstruction = "test", toolAllowlist = Array.Empty<string>(), memoryPolicy = new { }, accessPolicy = new { }, enabled = true })).Content.ReadFromJsonAsync<JsonElement>();
+            var session = await (await client.PostAsJsonAsync("/api/llm/v1/sessions", new { agentId = agent.GetProperty("id").GetString() })).Content.ReadFromJsonAsync<JsonElement>();
+            client.DefaultRequestHeaders.Add("Idempotency-Key", "stale-run");
+            var accepted = await (await client.PostAsJsonAsync("/api/llm/v1/runs", new RunCreate(agent.GetProperty("id").GetString()!, session.GetProperty("sessionId").GetString()!, "task", "input"))).Content.ReadFromJsonAsync<JsonElement>();
+            var runId = accepted.GetProperty("runId").GetString();
+            for (var i = 0; i < 100; i++)
+            {
+                var run = await client.GetFromJsonAsync<JsonElement>($"/api/llm/v1/runs/{runId}");
+                if (run.GetProperty("status").GetString() == "succeeded") break;
+                await Task.Delay(20);
+            }
+            var response = await client.GetFromJsonAsync<JsonElement>("/api/llm/v1/proposals/proposal-sqlite/staleness");
+            Assert.True(response.GetProperty("stale").GetBoolean());
+            Assert.Equal("SOURCE_VERSION_CHANGED", response.GetProperty("reasons")[0].GetProperty("code").GetString());
+            Assert.Equal("3", response.GetProperty("reasons")[0].GetProperty("expectedVersion").GetString());
+            Assert.Equal("4", response.GetProperty("reasons")[0].GetProperty("actualVersion").GetString());
+        }
+        finally
+        {
+            if (File.Exists(database)) File.Delete(database);
+        }
+    }
+
+    [Fact]
     public async Task DemoMustBeExplicitlyEnabled()
     {
         await using var app = ApiApp.Build([]);
@@ -120,6 +160,15 @@ public sealed class ApiTests
         using var client = new HttpClient { BaseAddress = new Uri(address) };
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/api/llm/v1/agents")).StatusCode);
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/ready")).StatusCode);
+    }
+
+    private sealed class ChangedVersionGraphReader : IGraphReader
+    {
+        public Task<GraphObject?> GetObjectAsync(string objectId, GraphReadContext context, CancellationToken cancellationToken)
+        {
+            var attributes = JsonSerializer.SerializeToElement(new { groupCode = (string?)null, decisionId = "doc-9" });
+            return Task.FromResult<GraphObject?>(new GraphObject(objectId, "Application", "4", attributes));
+        }
     }
 
     private sealed class ImmediateExecutor : IAgentExecutor
