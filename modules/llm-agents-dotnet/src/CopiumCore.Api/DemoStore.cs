@@ -98,10 +98,10 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
                     p.Field, p.Before.Clone(), p.After.Clone(), p.Reason, p.Evidence.ToArray())).ToArray();
                 foreach (var proposal in prepared) proposals.Add(proposal.Id, proposal);
                 run.Result = new RunResult(result.Outcome, result.Summary, result.Evidence.ToArray(), prepared.Select(p => p.Id).ToArray());
-                run.Status = "succeeded";
             }
             if (reviewStore is not null)
                 foreach (var proposal in prepared) await reviewStore.SaveAsync(proposal, cancellationToken);
+            lock (gate) run.Status = "succeeded";
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
