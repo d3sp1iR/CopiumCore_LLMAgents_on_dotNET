@@ -72,7 +72,8 @@ public static class ApiApp
             if (executor is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
             var (entry, error, created) = store.Accept(key, request);
             if (error is not null) return Problem(context, error == "NOT_FOUND" ? 404 : 409, error);
-            if (created) _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, services.GetService<IReviewStore>()));
+            var reviewStore = services.GetService<IReviewStore>();
+            if (created) _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, reviewStore));
             return Results.Accepted($"/api/llm/v1/runs/{entry!.Id}", new { runId = entry.Id, status = "queued", sessionId = request.SessionId, taskId = request.TaskId });
         });
         api.MapGet("/runs/{id}", (string id, DemoStore store, HttpContext context) =>
