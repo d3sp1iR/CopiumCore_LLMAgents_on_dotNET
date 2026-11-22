@@ -45,6 +45,41 @@ public sealed class ObjectsTests
     }
 
     [Fact]
+    public async Task CasWriteRejectsStaleVersionAndReplaysOperation()
+    {
+        await using var app = TestGraphApp.Build([]);
+        app.Urls.Add("http://127.0.0.1:0");
+        await app.StartAsync();
+        var address = app.Services.GetRequiredService<IServer>()
+            .Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+        using var client = new HttpClient { BaseAddress = new Uri(address) };
+
+        var request = new
+        {
+            value = "ИУ5-31Б",
+            expectedVersion = "7",
+            operationId = "op-cas-test"
+        };
+        var applied = await client.PutAsJsonAsync("/objects/req-17/attributes/groupCode", request);
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        var receipt = await applied.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("8", receipt.GetProperty("version").GetString());
+        Assert.True(receipt.GetProperty("applied").GetBoolean());
+
+        var replay = await client.PutAsJsonAsync("/objects/req-17/attributes/groupCode", request);
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal("8", (await replay.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("version").GetString());
+
+        var stale = await client.PutAsJsonAsync("/objects/req-17/attributes/groupCode", new
+        {
+            value = "ИУ5-32Б",
+            expectedVersion = "7",
+            operationId = "op-cas-stale"
+        });
+        Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode);
+    }
+
+    [Fact]
     public async Task UnknownObjectReturnsNotFound()
     {
         await using var app = TestGraphApp.Build([]);
