@@ -69,7 +69,12 @@ public sealed class ApiTests
         try
         {
             var executor = new ImmediateExecutor();
-            await using var app = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"], services => services.AddSingleton<IAgentExecutor>(executor));
+            var sink = new RecordingSink();
+            await using var app = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"], services =>
+            {
+                services.AddSingleton<IAgentExecutor>(executor);
+                services.AddSingleton<IEventSink>(sink);
+            });
             app.Urls.Add("http://127.0.0.1:0");
             await app.StartAsync();
             var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
@@ -90,6 +95,11 @@ public sealed class ApiTests
             Assert.Equal(HttpStatusCode.OK, proposalResponse.StatusCode);
             var proposal = await proposalResponse.Content.ReadFromJsonAsync<JsonElement>();
             Assert.Equal(1, proposal.GetProperty("version").GetInt32());
+            for (var i = 0; i < 100 && sink.Events.Count == 0; i++) await Task.Delay(20);
+            Assert.Contains(sink.Events, item => item.Type == "llm.proposal.created" && item.AggregateId == "proposal-sqlite");
+            var createdCount = sink.Events.Count(item => item.EventId == "evt-proposal-sqlite");
+            await Task.Delay(300);
+            Assert.Equal(createdCount, sink.Events.Count(item => item.EventId == "evt-proposal-sqlite"));
             using var approve = new HttpRequestMessage(HttpMethod.Post, "/api/llm/v1/proposals/proposal-sqlite/approve");
             approve.Headers.TryAddWithoutValidation("If-Match", "1"); approve.Headers.Add("Idempotency-Key", "approve-1");
             var decision = await client.SendAsync(approve);
@@ -234,6 +244,16 @@ public sealed class ApiTests
         using var client = new HttpClient { BaseAddress = new Uri(address) };
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/api/llm/v1/agents")).StatusCode);
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/ready")).StatusCode);
+    }
+
+    private sealed class RecordingSink : IEventSink
+    {
+        public List<OutboxEvent> Events { get; } = [];
+        public Task PublishAsync(OutboxEvent eventItem, CancellationToken cancellationToken)
+        {
+            lock (Events) Events.Add(eventItem);
+            return Task.CompletedTask;
+        }
     }
 
     private sealed class ChangedVersionGraphReader : IGraphReader

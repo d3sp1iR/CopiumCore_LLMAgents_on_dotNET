@@ -31,6 +31,8 @@ public static class ApiApp
             builder.Services.AddSingleton<IReviewStore>(services => services.GetRequiredService<SqliteReviewStore>());
             builder.Services.AddSingleton<SqliteRunStore>();
             builder.Services.AddSingleton<IRunStore>(services => services.GetRequiredService<SqliteRunStore>());
+            builder.Services.AddSingleton<IEventSink, LoggingEventSink>();
+            builder.Services.AddHostedService<OutboxDispatcher>();
         }
         if (demo && builder.Configuration.GetValue<bool>("CopiumCore:UseLocalModel"))
         {
