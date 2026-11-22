@@ -126,7 +126,7 @@ public static class ApiApp
             if (!int.TryParse(request.Headers.IfMatch.ToString().Trim('"', 'W', '/'), out var version)) return Problem(context, 428, "PRECONDITION_REQUIRED");
             var key = request.Headers["Idempotency-Key"].ToString();
             if (string.IsNullOrWhiteSpace(key)) return Problem(context, 400, "VALIDATION_ERROR");
-            var result = await reviewStore.DecideAsync(id, "reject", "Rejected by reviewer", version, key, context.RequestAborted);
+            var result = await reviewStore.DecideAsync(id, "reject", "Rejected by reviewer", version, key, cancellationToken: context.RequestAborted);
             return result is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Ok(result);
         });
         return app;
