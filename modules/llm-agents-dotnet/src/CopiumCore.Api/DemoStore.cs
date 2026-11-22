@@ -20,6 +20,7 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
     private readonly Dictionary<string, DemoSession> sessions = [];
     private readonly Dictionary<string, RunEntry> runs = [];
     private readonly Dictionary<string, RunEntry> keys = [];
+    private readonly Dictionary<string, CancellationTokenSource> cancellations = [];
     private readonly Dictionary<string, ProposalView> proposals = [];
 
     public AgentDefinition AddAgent(AgentCreate request)
@@ -69,6 +70,27 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
     public ProposalView? GetProposal(string id)
     {
         lock (gate) return proposals.GetValueOrDefault(id);
+    }
+
+    public bool Cancel(string id)
+    {
+        lock (gate)
+        {
+            if (!runs.TryGetValue(id, out var run) || run.Status is not ("queued" or "running")) return false;
+            if (!cancellations.TryGetValue(id, out var cancellation)) return false;
+            cancellation.Cancel();
+            return true;
+        }
+    }
+
+    public CancellationToken RegisterCancellation(string id, CancellationToken lifetime)
+    {
+        lock (gate)
+        {
+            var cancellation = CancellationTokenSource.CreateLinkedTokenSource(lifetime);
+            cancellations[id] = cancellation;
+            return cancellation.Token;
+        }
     }
 
     private static bool ValidSource(SourceRef? source) => source is not null &&

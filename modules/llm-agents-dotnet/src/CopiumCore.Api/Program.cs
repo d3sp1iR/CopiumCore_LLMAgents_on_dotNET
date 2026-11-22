@@ -112,7 +112,8 @@ public static class ApiApp
             if (created)
             {
                 if (runStore is not null) await runStore.SaveRunAsync(entry!, context.RequestAborted);
-                _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, reviewStore, runStore));
+                var runCancellation = store.RegisterCancellation(entry!.Id, lifetime.ApplicationStopping);
+                _ = Task.Run(() => store.ExecuteAsync(entry!, executor, runCancellation, reviewStore, runStore));
             }
             return Results.Accepted($"/api/llm/v1/runs/{entry!.Id}", new { runId = entry.Id, status = "queued", sessionId = request.SessionId, taskId = request.TaskId });
         });
@@ -123,6 +124,11 @@ public static class ApiApp
             var persisted = services.GetService<IRunStore>();
             var stored = persisted is null ? null : await persisted.GetRunAsync(id, context.RequestAborted);
             return stored is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(stored);
+        });
+        api.MapPost("/runs/{id}/cancel", (string id, DemoStore store, HttpContext context) =>
+        {
+            if (!store.Cancel(id)) return Problem(context, 409, "RUN_NOT_CANCELLABLE");
+            return Results.Accepted($"/api/llm/v1/runs/{id}", new { runId = id, status = "cancellationRequested" });
         });
         api.MapGet("/proposals/{id}", async (string id, DemoStore store, HttpContext context, IServiceProvider services) =>
         {

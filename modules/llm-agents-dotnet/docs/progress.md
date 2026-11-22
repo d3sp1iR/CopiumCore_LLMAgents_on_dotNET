@@ -60,4 +60,5 @@
 - Добавлен API-тест с изменённой версией evidence: proposal хранит версию `3`, reader возвращает `4`, endpoint должен объяснить `SOURCE_VERSION_CHANGED`. Проверка выполняется в CI текущего коммита.
 - Добавлен `SqliteRunStore`: sessions и runs сохраняются в SQLite, terminal transitions записываются после выполнения, а `GET /runs/{id}` читает persisted state после исчезновения in-memory записи. CI для `0565e2f` прошёл: restore, Release build и все тесты solution.
 - Добавлен restart-тест: завершённый run создаётся первым API-хостом и читается вторым хостом с той же SQLite-базой. Проверка выполняется в CI текущего коммита.
-- Ограничения: полноценное восстановление queued/running worker после рестарта, Graph CAS подключён только при наличии `Graph:Url`; delivery worker, provenance index, timeout/cancel API и AT-17 ещё не реализованы.
+- Добавлен cancel-срез: per-run `CancellationTokenSource`, `POST /runs/{id}/cancel`, terminal status `cancelled` сохраняется через `SqliteRunStore`. Добавлен интеграционный тест с блокирующим executor; CI для текущего коммита обязателен.
+- Ограничения: полноценное восстановление queued/running worker после рестарта, Graph CAS подключён только при наличии `Graph:Url`; delivery worker, provenance index, timeout API и AT-17 ещё не реализованы.

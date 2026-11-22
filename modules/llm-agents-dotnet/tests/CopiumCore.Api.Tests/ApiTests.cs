@@ -151,6 +151,40 @@ public sealed class ApiTests
     }
 
     [Fact]
+    public async Task CancelledRunIsPersisted()
+    {
+        var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
+        try
+        {
+            var executor = new BlockingExecutor();
+            await using var app = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"], services => services.AddSingleton<IAgentExecutor>(executor));
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            using var client = new HttpClient { BaseAddress = new Uri(address) };
+            var agent = await (await client.PostAsJsonAsync("/api/llm/v1/agents", new { name = "agent", purpose = "test", modelProfile = "demo", systemInstruction = "test", toolAllowlist = Array.Empty<string>(), memoryPolicy = new { }, accessPolicy = new { }, enabled = true })).Content.ReadFromJsonAsync<JsonElement>();
+            var session = await (await client.PostAsJsonAsync("/api/llm/v1/sessions", new { agentId = agent.GetProperty("id").GetString() })).Content.ReadFromJsonAsync<JsonElement>();
+            client.DefaultRequestHeaders.Add("Idempotency-Key", "cancel-run");
+            var accepted = await (await client.PostAsJsonAsync("/api/llm/v1/runs", new RunCreate(agent.GetProperty("id").GetString()!, session.GetProperty("sessionId").GetString()!, "task", "input"))).Content.ReadFromJsonAsync<JsonElement>();
+            var runId = accepted.GetProperty("runId").GetString()!;
+            await executor.Started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            var cancel = await client.PostAsync($"/api/llm/v1/runs/{runId}/cancel", null);
+            Assert.Equal(HttpStatusCode.Accepted, cancel.StatusCode);
+            for (var i = 0; i < 100; i++)
+            {
+                var run = await client.GetFromJsonAsync<JsonElement>($"/api/llm/v1/runs/{runId}");
+                if (run.GetProperty("status").GetString() == "cancelled") return;
+                await Task.Delay(20);
+            }
+            Assert.Fail("Run was not cancelled");
+        }
+        finally
+        {
+            if (File.Exists(database)) File.Delete(database);
+        }
+    }
+
+    [Fact]
     public async Task CompletedRunSurvivesApiRestart()
     {
         var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
