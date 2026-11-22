@@ -2,8 +2,7 @@ using CopiumCore.Api;
 using CopiumCore.Application.Graph;
 using CopiumCore.Infrastructure.Graph;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.AI;
-using OpenAI;
+
 
 var app = ApiApp.Build(args);
 app.Run();
@@ -37,24 +36,9 @@ public static class ApiApp
         if (demo && builder.Configuration.GetValue<bool>("CopiumCore:UseLocalModel"))
         {
             var graphUrl = builder.Configuration["Graph:Url"] ?? "http://localhost:5001/";
-            var provider = builder.Configuration["CopiumCore:ModelProvider"] ?? "Ollama";
             var model = builder.Configuration["Ollama:Model"] ?? "qwen3:4b-instruct";
-            if (string.Equals(provider, "OpenAI", StringComparison.OrdinalIgnoreCase))
-            {
-                var apiKey = builder.Configuration["OpenAI:ApiKey"] ?? Environment.GetEnvironmentVariable("OPENAI_API_KEY");
-                var endpoint = builder.Configuration["OpenAI:Endpoint"];
-                if (string.IsNullOrWhiteSpace(apiKey)) throw new InvalidOperationException("OpenAI provider requires OpenAI:ApiKey or OPENAI_API_KEY.");
-                var clientOptions = string.IsNullOrWhiteSpace(endpoint) ? null : new OpenAIClientOptions { Endpoint = new Uri(endpoint) };
-                builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(_ =>
-                    new OpenAIClient(new System.ClientModel.ApiKeyCredential(apiKey), clientOptions)
-                        .GetChatClient(builder.Configuration["OpenAI:Model"] ?? "gpt-4o-mini")
-                        .AsIChatClient());
-            }
-            else
-            {
-                var ollamaUrl = builder.Configuration["Ollama:Url"] ?? "http://localhost:11434";
-                builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(_ => new OllamaSharp.OllamaApiClient(new Uri(ollamaUrl), model));
-            }
+            var ollamaUrl = builder.Configuration["Ollama:Url"] ?? "http://localhost:11434";
+            builder.Services.AddSingleton<Microsoft.Extensions.AI.IChatClient>(_ => new OllamaSharp.OllamaApiClient(new Uri(ollamaUrl), model));
             builder.Services.AddSingleton<CopiumCore.Application.Graph.IGraphReader>(_ => new CopiumCore.Infrastructure.Graph.DemoGraphReader(new HttpClient { BaseAddress = new Uri(graphUrl.TrimEnd('/') + "/") }));
             builder.Services.AddSingleton<CopiumCore.AgentRuntime.AgentExecutor>();
             builder.Services.TryAddSingleton<IAgentExecutor, LocalAgentExecutor>();

@@ -2,10 +2,12 @@
 """Reproducible AT-17 fixture and A/B/C benchmark for the typed groupCode validator."""
 from __future__ import annotations
 
+import argparse
 import json
 import random
 import statistics
 import time
+import urllib.request
 from pathlib import Path
 
 SEED = 17017
@@ -89,6 +91,43 @@ def indexed_scan(fixture: dict) -> tuple[int, int, int]:
     return reads, 0, len(stale_ids)
 
 
+def live_a(fixture: dict, endpoint: str, model: str) -> dict:
+    latencies = []
+    tool_calls = 0
+    errors = []
+    for proposal in fixture["proposals"]:
+        payload = {
+            "model": model,
+            "stream": False,
+            "messages": [{"role": "user", "content": f"Call getObject for objectId {proposal['applicationId']}. Return only a tool call."}],
+            "tools": [{"type": "function", "function": {"name": "getObject", "description": "Read an object by id", "parameters": {"type": "object", "properties": {"objectId": {"type": "string"}}, "required": ["objectId"]}}}],
+        }
+        request = urllib.request.Request(endpoint.rstrip("/") + "/api/chat", data=json.dumps(payload).encode(), headers={"Content-Type": "application/json"})
+        start = time.perf_counter_ns()
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                body = json.load(response)
+            latencies.append((time.perf_counter_ns() - start) / 1_000_000)
+            calls = body.get("message", {}).get("tool_calls", [])
+            if calls and calls[0].get("function", {}).get("name") == "getObject":
+                tool_calls += 1
+            else:
+                errors.append({"proposalId": proposal["proposalId"], "error": "missing_getObject_tool_call"})
+        except Exception as error:
+            errors.append({"proposalId": proposal["proposalId"], "error": type(error).__name__ + ": " + str(error)})
+    return {
+        "strategy": "A-live-ollama",
+        "model": model,
+        "endpoint": endpoint,
+        "calls": len(fixture["proposals"]),
+        "successfulToolCalls": tool_calls,
+        "errorCount": len(errors),
+        "medianMs": round(statistics.median(latencies), 4) if latencies else None,
+        "samplesMs": [round(value, 4) for value in latencies],
+        "errors": errors,
+    }
+
+
 def measure(name: str, operation, fixture: dict) -> dict:
     samples = []
     last = None
@@ -108,6 +147,11 @@ def measure(name: str, operation, fixture: dict) -> dict:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--live-a", action="store_true")
+    parser.add_argument("--ollama-url", default="http://127.0.0.1:11434")
+    parser.add_argument("--ollama-model", default="qwen3:4b-instruct")
+    args = parser.parse_args()
     fixture = make_fixture()
     REPORT_DIR.mkdir(parents=True, exist_ok=True)
     FIXTURE_PATH.write_text(json.dumps(fixture, ensure_ascii=False, indent=2) + "\n")
@@ -123,10 +167,12 @@ def main() -> None:
         "validation": {
             "B_equals_C_stale_set": results[1]["staleProposals"] == results[2]["staleProposals"] == 1,
             "C_less_reads_than_B": results[2]["graphReads"] < results[1]["graphReads"],
-            "A_is_simulation": True,
+            "A_is_simulation": not args.live_a,
         },
         "results": results,
     }
+    if args.live_a:
+        report["liveA"] = live_a(fixture, args.ollama_url, args.ollama_model)
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
 
