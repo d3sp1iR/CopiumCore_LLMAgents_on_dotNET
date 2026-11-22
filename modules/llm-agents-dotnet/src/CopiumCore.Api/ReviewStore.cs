@@ -18,6 +18,8 @@ public interface IReviewStore
 
 public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<SqliteReviewStore> logger) : IReviewStore, IAsyncDisposable
 {
+    static SqliteReviewStore() => SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_dynamic_cdecl());
+
     private readonly string connectionString = new SqliteConnectionStringBuilder
     {
         DataSource = configuration["CopiumCore:SqlitePath"] ?? "copiumcore-e2.db",

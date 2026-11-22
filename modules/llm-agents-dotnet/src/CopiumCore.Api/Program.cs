@@ -10,6 +10,8 @@ public static class ApiApp
     {
         var builder = WebApplication.CreateBuilder(args);
         var demo = builder.Configuration.GetValue<bool>("CopiumCore:Demo");
+        if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_dynamic_cdecl());
         builder.Services.AddSingleton<DemoStore>();
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
         {
@@ -61,7 +63,7 @@ public static class ApiApp
             var session = store.AddSession(request.AgentId);
             return session is null ? Problem(context, 404, "NOT_FOUND") : Results.Created($"/api/llm/v1/sessions/{session.SessionId}", session);
         });
-        api.MapPost("/runs", (RunCreate request, DemoStore store, HttpContext context, IServiceProvider services, IHostApplicationLifetime lifetime, IReviewStore? reviewStore = null) =>
+        api.MapPost("/runs", (RunCreate request, DemoStore store, HttpContext context, IServiceProvider services, IHostApplicationLifetime lifetime) =>
         {
             var key = context.Request.Headers["Idempotency-Key"].ToString();
             if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(request.AgentId) || string.IsNullOrWhiteSpace(request.SessionId) ||
@@ -70,7 +72,7 @@ public static class ApiApp
             if (executor is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
             var (entry, error, created) = store.Accept(key, request);
             if (error is not null) return Problem(context, error == "NOT_FOUND" ? 404 : 409, error);
-            if (created) _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, reviewStore));
+            if (created) _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, services.GetService<IReviewStore>()));
             return Results.Accepted($"/api/llm/v1/runs/{entry!.Id}", new { runId = entry.Id, status = "queued", sessionId = request.SessionId, taskId = request.TaskId });
         });
         api.MapGet("/runs/{id}", (string id, DemoStore store, HttpContext context) =>
@@ -78,13 +80,15 @@ public static class ApiApp
             var run = store.GetRun(id);
             return run is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(run);
         });
-        api.MapGet("/proposals/{id}", async (string id, DemoStore store, HttpContext context, IReviewStore? reviewStore = null) =>
+        api.MapGet("/proposals/{id}", async (string id, DemoStore store, HttpContext context, IServiceProvider services) =>
         {
+            var reviewStore = services.GetService<IReviewStore>();
             var proposal = reviewStore is null ? store.GetProposal(id) : await reviewStore.GetAsync(id, context.RequestAborted);
             return proposal is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(proposal);
         });
-        api.MapPost("/proposals/{id}/approve", async (string id, HttpRequest request, HttpContext context, IReviewStore? reviewStore = null) =>
+        api.MapPost("/proposals/{id}/approve", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>
         {
+            var reviewStore = services.GetService<IReviewStore>();
             if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
             if (!int.TryParse(request.Headers.IfMatch.ToString().Trim('"', 'W', '/'), out var version)) return Problem(context, 428, "PRECONDITION_REQUIRED");
             var key = request.Headers["Idempotency-Key"].ToString();
@@ -92,8 +96,9 @@ public static class ApiApp
             var result = await reviewStore.DecideAsync(id, "approve", null, version, key, context.RequestAborted);
             return result is null ? Problem(context, 409, "PROPOSAL_CONFLICT") : Results.Accepted($"/api/llm/v1/proposals/{id}", result);
         });
-        api.MapPost("/proposals/{id}/reject", async (string id, HttpRequest request, HttpContext context, IReviewStore? reviewStore = null) =>
+        api.MapPost("/proposals/{id}/reject", async (string id, HttpRequest request, HttpContext context, IServiceProvider services) =>
         {
+            var reviewStore = services.GetService<IReviewStore>();
             if (reviewStore is null) return Problem(context, 503, "DEPENDENCY_UNAVAILABLE");
             if (!int.TryParse(request.Headers.IfMatch.ToString().Trim('"', 'W', '/'), out var version)) return Problem(context, 428, "PRECONDITION_REQUIRED");
             var key = request.Headers["Idempotency-Key"].ToString();
