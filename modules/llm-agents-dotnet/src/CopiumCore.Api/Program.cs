@@ -29,6 +29,8 @@ public static class ApiApp
         {
             builder.Services.AddSingleton<SqliteReviewStore>();
             builder.Services.AddSingleton<IReviewStore>(services => services.GetRequiredService<SqliteReviewStore>());
+            builder.Services.AddSingleton<SqliteRunStore>();
+            builder.Services.AddSingleton<IRunStore>(services => services.GetRequiredService<SqliteRunStore>());
         }
         if (demo && builder.Configuration.GetValue<bool>("CopiumCore:UseLocalModel"))
         {
@@ -59,7 +61,10 @@ public static class ApiApp
         configureServices?.Invoke(builder.Services);
         var app = builder.Build();
         if (builder.Configuration.GetValue<bool>("CopiumCore:UseSqlite"))
+        {
             app.Services.GetRequiredService<IReviewStore>().InitializeAsync().GetAwaiter().GetResult();
+            app.Services.GetRequiredService<IRunStore>().InitializeAsync().GetAwaiter().GetResult();
+        }
 
         app.MapGet("/health", () => Results.Ok(new { status = "healthy" }));
         app.MapGet("/ready", () => Results.Json(new { status = "notReady", reason = "Production runtime and dependencies are not implemented" }, statusCode: 503));
@@ -84,13 +89,16 @@ public static class ApiApp
             var agent = store.GetAgent(id);
             return agent is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(agent);
         });
-        api.MapPost("/sessions", (SessionCreate request, DemoStore store, HttpContext context) =>
+        api.MapPost("/sessions", async (SessionCreate request, DemoStore store, HttpContext context, IServiceProvider services) =>
         {
             if (string.IsNullOrWhiteSpace(request.AgentId)) return Problem(context, 422, "VALIDATION_ERROR");
             var session = store.AddSession(request.AgentId);
-            return session is null ? Problem(context, 404, "NOT_FOUND") : Results.Created($"/api/llm/v1/sessions/{session.SessionId}", session);
+            if (session is null) return Problem(context, 404, "NOT_FOUND");
+            var runStore = services.GetService<IRunStore>();
+            if (runStore is not null) await runStore.SaveSessionAsync(session, context.RequestAborted);
+            return Results.Created($"/api/llm/v1/sessions/{session.SessionId}", session);
         });
-        api.MapPost("/runs", (RunCreate request, DemoStore store, HttpContext context, IServiceProvider services, IHostApplicationLifetime lifetime) =>
+        api.MapPost("/runs", async (RunCreate request, DemoStore store, HttpContext context, IServiceProvider services, IHostApplicationLifetime lifetime) =>
         {
             var key = context.Request.Headers["Idempotency-Key"].ToString();
             if (string.IsNullOrWhiteSpace(key) || string.IsNullOrWhiteSpace(request.AgentId) || string.IsNullOrWhiteSpace(request.SessionId) ||
@@ -100,13 +108,21 @@ public static class ApiApp
             var (entry, error, created) = store.Accept(key, request);
             if (error is not null) return Problem(context, error == "NOT_FOUND" ? 404 : 409, error);
             var reviewStore = services.GetService<IReviewStore>();
-            if (created) _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, reviewStore));
+            var runStore = services.GetService<IRunStore>();
+            if (created)
+            {
+                if (runStore is not null) await runStore.SaveRunAsync(entry!, context.RequestAborted);
+                _ = Task.Run(() => store.ExecuteAsync(entry!, executor, lifetime.ApplicationStopping, reviewStore, runStore));
+            }
             return Results.Accepted($"/api/llm/v1/runs/{entry!.Id}", new { runId = entry.Id, status = "queued", sessionId = request.SessionId, taskId = request.TaskId });
         });
-        api.MapGet("/runs/{id}", (string id, DemoStore store, HttpContext context) =>
+        api.MapGet("/runs/{id}", async (string id, DemoStore store, HttpContext context, IServiceProvider services) =>
         {
             var run = store.GetRun(id);
-            return run is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(run);
+            if (run is not null) return Results.Ok(run);
+            var persisted = services.GetService<IRunStore>();
+            var stored = persisted is null ? null : await persisted.GetRunAsync(id, context.RequestAborted);
+            return stored is null ? Problem(context, 404, "NOT_FOUND") : Results.Ok(stored);
         });
         api.MapGet("/proposals/{id}", async (string id, DemoStore store, HttpContext context, IServiceProvider services) =>
         {

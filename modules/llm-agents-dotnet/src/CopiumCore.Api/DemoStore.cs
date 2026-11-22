@@ -74,9 +74,10 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
     private static bool ValidSource(SourceRef? source) => source is not null &&
         !string.IsNullOrWhiteSpace(source.ObjectId) && !string.IsNullOrWhiteSpace(source.Version);
 
-    public async Task ExecuteAsync(RunEntry run, IAgentExecutor executor, CancellationToken cancellationToken, IReviewStore? reviewStore = null)
+    public async Task ExecuteAsync(RunEntry run, IAgentExecutor executor, CancellationToken cancellationToken, IReviewStore? reviewStore = null, IRunStore? runStore = null)
     {
         lock (gate) run.Status = "running";
+        if (runStore is not null) await runStore.SaveRunAsync(run, cancellationToken);
         try
         {
             var result = await executor.ExecuteAsync(new(run.Id, "demo-user", run.Request.SessionId, run.Request.TaskId, run.Request.Input, run.Agent), cancellationToken);
@@ -102,15 +103,18 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
             if (reviewStore is not null)
                 foreach (var proposal in prepared) await reviewStore.SaveAsync(proposal, cancellationToken);
             lock (gate) run.Status = "succeeded";
+            if (runStore is not null) await runStore.SaveRunAsync(run, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             lock (gate) { run.Status = "cancelled"; }
+            if (runStore is not null) await runStore.SaveRunAsync(run, CancellationToken.None);
         }
         catch (Exception ex)
         {
             logger.LogError("Run {RunId} failed: {ErrorType}", run.Id, ex.GetType().Name);
             lock (gate) { run.Status = "failed"; run.ErrorCode = ex is InvalidDataException ? "INVALID_MODEL_OUTPUT" : "EXECUTION_FAILED"; }
+            if (runStore is not null) await runStore.SaveRunAsync(run, CancellationToken.None);
         }
     }
 }
