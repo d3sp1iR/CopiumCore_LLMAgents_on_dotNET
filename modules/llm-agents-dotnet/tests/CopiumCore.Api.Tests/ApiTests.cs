@@ -232,6 +232,36 @@ public sealed class ApiTests
     }
 
     [Fact]
+    public async Task InterruptedRunIsRecoveredAfterRestart()
+    {
+        var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
+        try
+        {
+            await using (var first = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"]))
+            {
+                var runStore = first.Services.GetRequiredService<IRunStore>();
+                var request = new RunCreate("agent-1", "session-1", "task", "input");
+                var agent = new AgentDefinition("agent-1", "1", "agent", "test", "demo", "test", [],
+                    JsonSerializer.SerializeToElement(new { }), JsonSerializer.SerializeToElement(new { }), true);
+                await runStore.SaveRunAsync(new RunEntry("run-interrupted", request, agent) { Status = "running" });
+            }
+
+            await using var second = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"]);
+            second.Urls.Add("http://127.0.0.1:0");
+            await second.StartAsync();
+            var address = second.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            using var client = new HttpClient { BaseAddress = new Uri(address) };
+            var recovered = await client.GetFromJsonAsync<JsonElement>("/api/llm/v1/runs/run-interrupted");
+            Assert.Equal("failed", recovered.GetProperty("status").GetString());
+            Assert.Equal("RUN_INTERRUPTED", recovered.GetProperty("errorCode").GetString());
+        }
+        finally
+        {
+            if (File.Exists(database)) File.Delete(database);
+        }
+    }
+
+    [Fact]
     public async Task CompletedRunSurvivesApiRestart()
     {
         var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
