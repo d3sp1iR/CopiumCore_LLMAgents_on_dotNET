@@ -28,6 +28,7 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
     public async Task InitializeAsync(CancellationToken cancellationToken = default)
     {
         await using var connection = await OpenAsync(cancellationToken);
+        logger.LogDebug("SQLite review store initialized at {DataSource}", connection.DataSource);
         var command = connection.CreateCommand();
         command.CommandText = """
             CREATE TABLE IF NOT EXISTS proposals (
@@ -89,7 +90,7 @@ public sealed class SqliteReviewStore(IConfiguration configuration, ILogger<Sqli
     {
         await InitializeAsync(cancellationToken);
         await using var connection = await OpenAsync(cancellationToken);
-        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var transaction = (SqliteTransaction)await connection.BeginTransactionAsync(cancellationToken);
         var existing = connection.CreateCommand();
         existing.Transaction = transaction;
         existing.CommandText = "SELECT proposal_id,response_json FROM idempotency WHERE key=$key";
