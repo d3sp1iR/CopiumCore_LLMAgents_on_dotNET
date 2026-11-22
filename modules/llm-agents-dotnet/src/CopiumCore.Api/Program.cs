@@ -2,6 +2,7 @@ using CopiumCore.Api;
 using CopiumCore.Application.Graph;
 using CopiumCore.Infrastructure.Graph;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.AI;
 using OpenAI;
 
 var app = ApiApp.Build(args);
