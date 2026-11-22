@@ -2,6 +2,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="10.0.0" />
     <PackageReference Include="SQLitePCLRaw.provider.sqlite3" Version="2.1.11" />
+    <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.0.0" />
     <ProjectReference Include="../CopiumCore.Application/CopiumCore.Application.csproj" />
     <ProjectReference Include="../CopiumCore.Infrastructure/CopiumCore.Infrastructure.csproj" />
     <ProjectReference Include="../CopiumCore.AgentRuntime/CopiumCore.AgentRuntime.csproj" />
