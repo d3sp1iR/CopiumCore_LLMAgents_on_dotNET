@@ -62,6 +62,51 @@ public sealed class ApiTests
     }
 
     [Fact]
+    public async Task SqliteReviewUsesEtagAndIdempotency()
+    {
+        var database = Path.Combine(Path.GetTempPath(), $"copiumcore-{Guid.NewGuid():N}.db");
+        try
+        {
+            var executor = new ImmediateExecutor();
+            await using var app = ApiApp.Build(["--CopiumCore:Demo=true", "--CopiumCore:UseSqlite=true", $"--CopiumCore:SqlitePath={database}"], services => services.AddSingleton<IAgentExecutor>(executor));
+            app.Urls.Add("http://127.0.0.1:0");
+            await app.StartAsync();
+            var address = app.Services.GetRequiredService<IServer>().Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+            using var client = new HttpClient { BaseAddress = new Uri(address) };
+            var agentResponse = await client.PostAsJsonAsync("/api/llm/v1/agents", new { name = "agent", purpose = "test", modelProfile = "demo", systemInstruction = "test", toolAllowlist = Array.Empty<string>(), memoryPolicy = new { }, accessPolicy = new { }, enabled = true });
+            var agent = await agentResponse.Content.ReadFromJsonAsync<JsonElement>();
+            var session = await (await client.PostAsJsonAsync("/api/llm/v1/sessions", new { agentId = agent.GetProperty("id").GetString() })).Content.ReadFromJsonAsync<JsonElement>();
+            client.DefaultRequestHeaders.Add("Idempotency-Key", "sqlite-run");
+            var accepted = await (await client.PostAsJsonAsync("/api/llm/v1/runs", new RunCreate(agent.GetProperty("id").GetString()!, session.GetProperty("sessionId").GetString()!, "task", "input"))).Content.ReadFromJsonAsync<JsonElement>();
+            var runId = accepted.GetProperty("runId").GetString();
+            for (var i = 0; i < 100; i++)
+            {
+                var run = await client.GetFromJsonAsync<JsonElement>($"/api/llm/v1/runs/{runId}");
+                if (run.GetProperty("status").GetString() == "succeeded") break;
+                await Task.Delay(20);
+            }
+            var proposalResponse = await client.GetAsync("/api/llm/v1/proposals/proposal-sqlite");
+            Assert.Equal(HttpStatusCode.OK, proposalResponse.StatusCode);
+            var proposal = await proposalResponse.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.Equal(1, proposal.GetProperty("version").GetInt32());
+            using var approve = new HttpRequestMessage(HttpMethod.Post, "/api/llm/v1/proposals/proposal-sqlite/approve");
+            approve.Headers.TryAddWithoutValidation("If-Match", "1"); approve.Headers.Add("Idempotency-Key", "approve-1");
+            var decision = await client.SendAsync(approve);
+            Assert.Equal(HttpStatusCode.Accepted, decision.StatusCode);
+            using var replay = new HttpRequestMessage(HttpMethod.Post, "/api/llm/v1/proposals/proposal-sqlite/approve");
+            replay.Headers.TryAddWithoutValidation("If-Match", "1"); replay.Headers.Add("Idempotency-Key", "approve-1");
+            Assert.Equal(HttpStatusCode.Accepted, (await client.SendAsync(replay)).StatusCode);
+            using var conflict = new HttpRequestMessage(HttpMethod.Post, "/api/llm/v1/proposals/proposal-sqlite/approve");
+            conflict.Headers.TryAddWithoutValidation("If-Match", "1"); conflict.Headers.Add("Idempotency-Key", "approve-2");
+            Assert.Equal(HttpStatusCode.Conflict, (await client.SendAsync(conflict)).StatusCode);
+        }
+        finally
+        {
+            if (File.Exists(database)) File.Delete(database);
+        }
+    }
+
+    [Fact]
     public async Task DemoMustBeExplicitlyEnabled()
     {
         await using var app = ApiApp.Build([]);
@@ -71,6 +116,16 @@ public sealed class ApiTests
         using var client = new HttpClient { BaseAddress = new Uri(address) };
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/api/llm/v1/agents")).StatusCode);
         Assert.Equal(HttpStatusCode.ServiceUnavailable, (await client.GetAsync("/ready")).StatusCode);
+    }
+
+    private sealed class ImmediateExecutor : IAgentExecutor
+    {
+        public Task<ExecutionResult> ExecuteAsync(ExecutionRequest request, CancellationToken cancellationToken)
+        {
+            var source = new SourceRef("doc-9", "3", "groupCode");
+            return Task.FromResult(new ExecutionResult("proposalCreated", "test", [source],
+                [new PreparedProposal("proposal-sqlite", "req-17", "groupCode", JsonSerializer.SerializeToElement<object?>(null), JsonSerializer.SerializeToElement("ИУ5-31Б"), "decision", [source])]));
+        }
     }
 
     private sealed class BlockingExecutor : IAgentExecutor

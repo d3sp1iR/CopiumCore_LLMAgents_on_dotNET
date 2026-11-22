@@ -12,7 +12,7 @@ public sealed record SourceRef(string ObjectId, string Version, string? Field = 
 public sealed record RunResult(string Outcome, string Summary, SourceRef[] Evidence, string[] ProposalIds);
 public sealed record PreparedProposal(string Id, string TargetObjectId, string Field, JsonElement Before, JsonElement After, string Reason, SourceRef[] Evidence);
 public sealed record ExecutionResult(string Outcome, string Summary, SourceRef[] Evidence, PreparedProposal[] Proposals);
-public sealed record ProposalView(string Id, string RunId, string Status, string TargetObjectId, string Field, JsonElement Before, JsonElement After, string Reason, SourceRef[] Evidence);
+public sealed record ProposalView(string Id, string RunId, string Status, string TargetObjectId, string Field, JsonElement Before, JsonElement After, string Reason, SourceRef[] Evidence, int Version = 1);
 
 // Implementations must respect cancellation and return only results they can substantiate.
 public interface IAgentExecutor

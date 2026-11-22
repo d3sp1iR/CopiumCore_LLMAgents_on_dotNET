@@ -74,7 +74,7 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
     private static bool ValidSource(SourceRef? source) => source is not null &&
         !string.IsNullOrWhiteSpace(source.ObjectId) && !string.IsNullOrWhiteSpace(source.Version);
 
-    public async Task ExecuteAsync(RunEntry run, IAgentExecutor executor, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(RunEntry run, IAgentExecutor executor, CancellationToken cancellationToken, IReviewStore? reviewStore = null)
     {
         lock (gate) run.Status = "running";
         try
@@ -90,15 +90,18 @@ public sealed class DemoStore(ILogger<DemoStore> logger)
                     p.Evidence is null || p.Evidence.Length == 0 || p.Evidence.Any(e => !ValidSource(e) || !result.Evidence.Contains(e))) ||
                 result.Proposals.Select(p => p.Id).Distinct(StringComparer.Ordinal).Count() != result.Proposals.Length)
                 throw new InvalidOperationException("Invalid result");
+            ProposalView[] prepared;
             lock (gate)
             {
                 if (result.Proposals.Any(p => proposals.ContainsKey(p.Id))) throw new InvalidOperationException("Duplicate proposal");
-                var prepared = result.Proposals.Select(p => new ProposalView(p.Id, run.Id, "pendingReview", p.TargetObjectId,
+                prepared = result.Proposals.Select(p => new ProposalView(p.Id, run.Id, "pendingReview", p.TargetObjectId,
                     p.Field, p.Before.Clone(), p.After.Clone(), p.Reason, p.Evidence.ToArray())).ToArray();
                 foreach (var proposal in prepared) proposals.Add(proposal.Id, proposal);
                 run.Result = new RunResult(result.Outcome, result.Summary, result.Evidence.ToArray(), prepared.Select(p => p.Id).ToArray());
                 run.Status = "succeeded";
             }
+            if (reviewStore is not null)
+                foreach (var proposal in prepared) await reviewStore.SaveAsync(proposal, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
