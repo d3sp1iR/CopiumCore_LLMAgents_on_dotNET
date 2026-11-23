@@ -72,3 +72,10 @@
 - Добавлен API integration test конкурентных approve/reject через реальный Test Graph API и общий SQLite store: ровно один decision выигрывает, второй получает conflict; Graph изменяется только при approved и получает одну версию 7→8. CI для [ec2f73e](https://github.com/d3sp1iR/CopiumCore_LLMAgents_on_dotNET/actions/runs/45073479354) зелёный: restore, Release build и все тесты solution.
 - Локальный Ollama smoke выполнен после запуска daemon: `/api/tags` показал `qwen3:4b-instruct` с capability `tools`; прямой `/api/chat` smoke вернул `done=true` и `getObject(objectId=req-17)`. OpenAI больше не является частью локального E2/E3 профиля. После удаления OpenAI dependency и добавления `--live-a` CI для [4444750](https://github.com/d3sp1iR/CopiumCore_LLMAgents_on_dotNET/actions/runs/45084235255) зелёный: restore, Release build и все тесты solution.
 - Ограничения: восстановление не повторяет неопределённый running execution и не создаёт поздних proposals.
+
+## 2026-11-23 — локальная проверка после установки SDK
+
+- Локально установлен .NET SDK `10.0.100` в пользовательский каталог `/home/despy/.dotnet`, соответствующий `global.json`; добавлены `DOTNET_ROOT` и PATH в `~/.bashrc`.
+- `dotnet restore CopiumCore.slnx` и `dotnet build CopiumCore.slnx -c Release --no-restore` прошли успешно: 0 ошибок и 0 предупреждений.
+- Локальный `dotnet test CopiumCore.slnx -c Release --no-build` прошёл: 55 тестов успешно — Domain 11, AgentRuntime 25, Infrastructure 6, TestGraphApi 4, API 9.
+- Для SQLite-тестов использована пользовательская symlink `~/.local/lib/libsqlite3.so` на установленную системную `libsqlite3.so.0`; исходники и конфигурация проекта не менялись.
